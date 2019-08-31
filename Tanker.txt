@@ -1,0 +1,10 @@
+CurveStat
+Man må se på hvordan kurvene har beveget seg siste 120 minutter? Ut fra dette se om man er på en stigende kurve eller om det bare er midlertidig.
+
+Alarm hvis man har stigende kurver for hele perioden siste 120 minutter (positiv økning i temperatur). Denne kan gi en alarm på en gitt tid?
+
+Trigger
+Hvis man har en stigende kurve over 2 timer = true
+Når trigger kjøres så må man lagre ned verdi for valgt enhet. Kun ha den som en action?
+
+Hvordan lage dette på enkleste mulige måte?
