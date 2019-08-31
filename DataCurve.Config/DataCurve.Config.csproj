@@ -55,7 +55,7 @@
     </Compile>
     <Compile Include="ConfigAbout.cs" />
     <Compile Include="ConfigGeneral.cs" />
-    <Compile Include="Interface1.cs" />
+    <Compile Include="IConfigPage.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

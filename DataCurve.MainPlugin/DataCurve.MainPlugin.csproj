@@ -107,6 +107,10 @@
       <Project>{261c7a4b-3fe6-4d30-8d9e-df187701312f}</Project>
       <Name>DataCurve.Storage</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataCurve.TriggerHandling\DataCurve.TriggerHandling.csproj">
+      <Project>{2b46a025-bb23-4f14-aad9-419987ecccf7}</Project>
+      <Name>DataCurve.TriggerHandling</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

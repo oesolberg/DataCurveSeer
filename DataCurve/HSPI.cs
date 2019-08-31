@@ -246,9 +246,6 @@ namespace HSPI_DataCurve
 		{
 			return null;
 		}
-
-		
-
 		
 
 		public override void SpeakIn(int deviceId, string txt, bool w, string host)

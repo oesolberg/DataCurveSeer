@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DataCurve.Common;
 using DataCurve.Common.Interfaces;
 using DataCurve.Config;
+using DataCurve.TriggerHandling;
 using HomeSeerAPI;
 
 namespace DataCurve.MainPlugin
@@ -19,6 +20,7 @@ namespace DataCurve.MainPlugin
 	    private readonly ILogging _logging;
 	    private readonly IIniSettings _iniSettings;
 	    private readonly IAppCallbackAPI _callback;
+	    private ITriggerHandler _triggerHandler;
 
 	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback)
 	    {
@@ -36,6 +38,7 @@ namespace DataCurve.MainPlugin
 		    _config.RegisterConfigs();
 
 		    _logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
+		    _triggerHandler = new TriggerHandler();
 			return "";
 	    }
 
@@ -66,55 +69,58 @@ namespace DataCurve.MainPlugin
 
 		public bool GetHasTriggers()
 		{
-			return true;
+			return _triggerHandler.GetHasTriggers();
 		}
 
 		public int GetTriggerCount()
 		{
-			return 1;
+			return _triggerHandler.GetTriggerCount();
 		}
 
 		public string TriggerBuildUI(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo)
 		{
-			
+			return _triggerHandler.TriggerBuildUi(uniqueControlId, triggerInfo);
 
-			return "This can never be a trigger, only a condition";
 		}
 
 		public string TriggerFormatUI(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			return "";
+			return _triggerHandler.TriggerFormatUi(actionInfo);
 		}
 
-		public IPlugInAPI.strMultiReturn TriggerProcessPostUI(NameValueCollection postData, IPlugInAPI.strTrigActInfo actionInfo)
+		public IPlugInAPI.strMultiReturn TriggerProcessPostUI(NameValueCollection postData, IPlugInAPI.strTrigActInfo triggerInfo)
 		{
-			return new IPlugInAPI.strMultiReturn();
+			return _triggerHandler.TriggerProcessPostUi(postData, triggerInfo);
 		}
 
-		public bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo)
+		public bool TriggerTrue(IPlugInAPI.strTrigActInfo triggerInfo)
 		{
-			return false;
+			return _triggerHandler.TriggerTrue(triggerInfo);
 		}
 
 		public int get_SubTriggerCount(int triggerNumber)
 		{
-			return 0;
+			return _triggerHandler.GetSubTriggerCount(triggerNumber);
 		}
 
 		public string get_SubTriggerName(int triggerNumber, int subTriggerNumber)
 		{
-			return "NotImplementedException()";
+			return _triggerHandler.GetSubTriggerName(triggerNumber, subTriggerNumber);
 		}
 
-		public bool get_TriggerConfigured(IPlugInAPI.strTrigActInfo actionInfo)
+		public bool get_TriggerConfigured(IPlugInAPI.strTrigActInfo triggerInfo)
 		{
-			return false;
+			return _triggerHandler.GetTriggerConfigured(triggerInfo);
 		}
 
 		public string get_TriggerName(int triggerNumber)
 		{
-			return "jallabjalla";
+			return _triggerHandler.GetTriggerName(triggerNumber);
 		}
+
+	
+
+
 
 		public bool get_Condition(IPlugInAPI.strTrigActInfo actionInfo)
 		{

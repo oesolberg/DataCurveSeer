@@ -18,7 +18,6 @@ namespace DataCurve.Config
 		{
 			_pageName = pageName;
 			_hs = hs;
-			
 			_pageNameText = pageName.Replace("_", " ");
 		}
 
@@ -38,8 +37,6 @@ namespace DataCurve.Config
 			returnString.Append("<br/>");
 			returnString.Append("<br/>Big thank you to :");
 			returnString.Append("<br/>");
-			//returnString.Append("<br/>Christoffer at <a href=\"https://www.hjemmeautomasjon.no\" target=\"_blank\">www.hjemmeautomasjon.no</a>");
-			//returnString.Append("<br/>Trash2000 at <a href=\"https://www.hjemmeautomasjon.no\" target=\"_blank\">www.hjemmeautomasjon.no</a>");
 			//returnString.Append("<br/>Kenneth at <a href=\"https://www.hjemmeautomasjon.no\" target=\"_blank\">www.hjemmeautomasjon.no</a>");
 
 			returnString.Append("<br/>Moskus at <a href=\"https://www.hjemmeautomasjon.no\" target=\"_blank\">www.hjemmeautomasjon.no</a>");

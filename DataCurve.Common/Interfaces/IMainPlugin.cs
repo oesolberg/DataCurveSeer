@@ -21,7 +21,7 @@ namespace DataCurve.Common.Interfaces
 	    IPlugInAPI.strMultiReturn TriggerProcessPostUI(NameValueCollection postData,
 		    IPlugInAPI.strTrigActInfo actionInfo);
 
-	    bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo);
+	    bool TriggerTrue(IPlugInAPI.strTrigActInfo triggerInfo);
 	    int get_SubTriggerCount(int triggerNumber);
 
 	    string get_SubTriggerName(int triggerNumber, int subTriggerNumber);

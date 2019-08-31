@@ -88,6 +88,8 @@
     <Compile Include="Interfaces\IMainPlugin.cs" />
     <Compile Include="IniSettings.cs" />
     <Compile Include="Interfaces\IIniSettings.cs" />
+    <Compile Include="Interfaces\ITrigger.cs" />
+    <Compile Include="Interfaces\ITriggerHandling.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
