@@ -267,7 +267,7 @@ namespace HSPI_DataCurve
 
 		public override string GetPagePlugin(string page, string user, int userRights, string queryString)
 		{
-			return "";
+			return _mainPlugin.GetPagePlugin(page, user, userRights, queryString);
 		}
 
 		public override string PostBackProc(string page, string data, string user, int userRights)

@@ -25,7 +25,11 @@ namespace DataCurve.Config
 		private readonly IHSApplication _hs;
 		private List<IConfigPage> _configPages;
 
-		private const string DataCurveGeneralConfig = "DataCurve_General_Config";
+		private const string GeneralConfig = "_General_Config";
+		private const string AboutConfig = "_About";
+
+		private readonly string _dataCurveGeneralConfig = Utility.PluginName + GeneralConfig;
+		private readonly string _dataCurveAboutConfig = Utility.PluginName + AboutConfig;
 
 		public MainConfig(ILogging logging, IHSApplication hs, IIniSettings iniSettings, IAppCallbackAPI callback, IMainPlugin mainPlugin)
 		{
@@ -40,13 +44,14 @@ namespace DataCurve.Config
 		{
 			var wpd = new WebPageDesc
 			{
-				link = DataCurveGeneralConfig,
+				link = _dataCurveGeneralConfig,
 				plugInName = Utility.PluginName
 			};
 			_callback.RegisterConfigLink(wpd);
 
 			if (_configPages == null) _configPages = new List<IConfigPage>();
-			_configPages.Add(CreateConfigPage(DataCurveGeneralConfig));
+			_configPages.Add(CreateConfigPage(_dataCurveGeneralConfig));
+			_configPages.Add(CreateConfigPage(_dataCurveAboutConfig));
 		}
 
 		public string PostBackProc(string page, string data, string user, int userRights)
@@ -75,14 +80,15 @@ namespace DataCurve.Config
 		private IConfigPage CreateConfigPage(string pageName)
 		{
 			Scheduler.PageBuilderAndMenu.clsPageBuilder pageToRegister;
-			switch (pageName)
+			var pageNameWithoutStart = pageName.Replace(Utility.PluginName, "");
+			switch (pageNameWithoutStart)
 			{
-				case DataCurveGeneralConfig:
+				case GeneralConfig:
 					pageToRegister = new ConfigGeneral(pageName, _hs, _iniSettings, _logging, _mainPlugin);
 					break;
-				//case GCalSeerAboutPage:
-				//	pageToRegister = new ConfigAbout(pageName, _hs, _iniSettings, _log);
-				//	break;
+				case AboutConfig:
+					pageToRegister = new ConfigAbout(pageName, _hs, _iniSettings, _logging);
+					break;
 				default: throw new NotImplementedException($"Page {pageName} is not implemented");
 			}
 

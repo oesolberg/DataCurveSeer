@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DataCurve.Config")]
+[assembly: AssemblyTitle("DataCurve.TriggerHandling")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("DataCurve.Config")]
+[assembly: AssemblyProduct("DataCurve.TriggerHandling")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -16,5 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6d67ccea-282f-4159-bc73-04e2f7512b17")]
-
+[assembly: Guid("2b46a025-bb23-4f14-aad9-419987ecccf7")]
