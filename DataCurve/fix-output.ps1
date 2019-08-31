@@ -24,19 +24,8 @@ if ((test-path $destination) -eq $False) {
 }
 
 
-gci $source -File | where { $_.Name -notmatch ".*$keep.*" } | % {
+gci $source -File | where { $_.Name -notmatch "HSPI_$keep.*" } | % {
     Move-Item $_.FullName -Destination $destination -Force -Verbose
-}
-#Remove Credentials if found and config is release
-""
-"*** Removing credentials for release ***"
-if($configuration -eq "Release"){
-	$credentialsPath=Join-Path -Path $destination -ChildPath "credentials.json"
-	# Write-Host $credentialsPath
-	if(Test-Path($credentialsPath)){
-		"Deleting $credentialsPath"
-		Remove-Item -Path $credentialsPath
-	}
 }
 
 ""
