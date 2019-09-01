@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="TriggerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Triggers\DataCurveTrigger.cs" />
   </ItemGroup>
   <ItemGroup>

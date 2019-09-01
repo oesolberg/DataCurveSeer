@@ -84,6 +84,9 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="HsCollectionFactory.cs" />
+    <Compile Include="Classes.cs" />
+    <Compile Include="IHsCollectionFactory.cs" />
     <Compile Include="Interfaces\ILogging.cs" />
     <Compile Include="Interfaces\IMainPlugin.cs" />
     <Compile Include="IniSettings.cs" />

@@ -8,3 +8,6 @@ Hvis man har en stigende kurve over 2 timer = true
 Når trigger kjøres så må man lagre ned verdi for valgt enhet. Kun ha den som en action?
 
 Hvordan lage dette på enkleste mulige måte?
+
+Valg i event
+hvis device xx har hatt  stigende/synkende økning over x antall minutters periode

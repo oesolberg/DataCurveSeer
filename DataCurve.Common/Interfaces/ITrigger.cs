@@ -14,7 +14,7 @@ namespace DataCurve.Common.Interfaces
 		//int EvRef { get; }
 
 		//bool ContainsSubTriggerActionNumber(int subTriggerActionNumber);
-		//void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo);
+		void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo);
 		IPlugInAPI.strTrigActInfo GetTriggerActionInfo();
 
 		void SetCondition(IPlugInAPI.strTrigActInfo actionInfo, bool value);
@@ -32,6 +32,7 @@ namespace DataCurve.Common.Interfaces
 		string TriggerBuildUi(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo);
 		bool GetHasConditions();
 		int GetSubTriggerCount();
+
 		bool ContainsSubTriggerActionNumber(int actionInfoSubTaNumber);
 	}
 }

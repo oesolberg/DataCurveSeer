@@ -27,7 +27,7 @@ namespace HSPI_DataCurve
 			_iniSettings = new IniSettings(HS);
 			_iniSettings.LoadSettingsFromIniFile();
 			_logging = new Logging(_iniSettings, HS);
-			_mainPlugin = new MainPlugin(HS,_logging,_iniSettings,Callback);
+			_mainPlugin = new MainPlugin(HS,_logging,_iniSettings,Callback, new HsCollectionFactory());
 			_mainPlugin.InitIO(port);
 			// debug
 

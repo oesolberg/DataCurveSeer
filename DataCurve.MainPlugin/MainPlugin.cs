@@ -21,13 +21,15 @@ namespace DataCurve.MainPlugin
 	    private readonly IIniSettings _iniSettings;
 	    private readonly IAppCallbackAPI _callback;
 	    private ITriggerHandler _triggerHandler;
+	    private HsCollectionFactory _collectionFactory;
 
-	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback)
+	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback,HsCollectionFactory collectionFactory)
 	    {
 		    _hs = hs;
 		    _logging = logging;
 		    _iniSettings = iniSettings;
 		    _callback = callback;
+		    _collectionFactory = collectionFactory;
 
 	    }
 	    public string InitIO(string port)
@@ -38,7 +40,7 @@ namespace DataCurve.MainPlugin
 		    _config.RegisterConfigs();
 
 		    _logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
-		    _triggerHandler = new TriggerHandler();
+		    _triggerHandler = new TriggerHandler(_hs,_callback,_iniSettings,_logging, _collectionFactory);
 			return "";
 	    }
 
@@ -57,15 +59,7 @@ namespace DataCurve.MainPlugin
 		    return _config.PostBackProc(page, data, user, userRights);
 	    }
 
-		public void Dispose()
-		{
-
-			Dispose(true);
-
-			// Use SupressFinalize in case a subclass 
-			// of this type implements a finalizer.
-			GC.SuppressFinalize(this);
-		}
+		
 
 		public bool GetHasTriggers()
 		{
@@ -137,6 +131,16 @@ namespace DataCurve.MainPlugin
 			var eventRef = actionInfo.evRef;
 			var uid = actionInfo.UID;
 			Console.WriteLine($"setting condition to {value.ToString()} for evRef {eventRef} and UID {uid}");
+		}
+
+		public void Dispose()
+		{
+
+			Dispose(true);
+
+			// Use SupressFinalize in case a subclass 
+			// of this type implements a finalizer.
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)

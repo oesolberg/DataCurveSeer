@@ -28,8 +28,18 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		public bool ContainsSubTriggerActionNumber(int subTriggerNumber)
 		{
-			if (subTriggerNumber == 0) return true;
+			if (subTriggerNumber == -1) return true;
 			return false;
+		}
+
+		//public IPlugInAPI.strTrigActInfo GetTriggerActionInfo()
+		//{
+		//	throw new System.NotImplementedException();
+		//}
+
+		public void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		public IPlugInAPI.strTrigActInfo GetTriggerActionInfo()
@@ -39,35 +49,33 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		public void SetCondition(IPlugInAPI.strTrigActInfo actionInfo, bool value)
 		{
-			throw new System.NotImplementedException();
+			return;
 		}
 
 		public bool GetCondition(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			throw new System.NotImplementedException();
+			return true;
 		}
 
 
 		public bool GetTriggerConfigured(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			throw new System.NotImplementedException();
+			return false;
 		}
-
-		
 
 		public bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			throw new System.NotImplementedException();
+			return false;
 		}
 
 		public IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData, IPlugInAPI.strTrigActInfo trigActInfo)
 		{
-			throw new System.NotImplementedException();
+			return new IPlugInAPI.strMultiReturn();
 		}
 
 		public string TriggerFormatUi(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			throw new System.NotImplementedException();
+			return "This can never be a trigger, only a condition";
 		}
 
 		public string TriggerBuildUi(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo)
