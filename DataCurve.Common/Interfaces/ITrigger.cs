@@ -10,8 +10,7 @@ namespace DataCurve.Common.Interfaces
 		int UID { get; set; }
 
 		int EvRef { get; set; }
-		//int UID { get; }
-		//int EvRef { get; }
+		bool IsCondition { get; }
 
 		//bool ContainsSubTriggerActionNumber(int subTriggerActionNumber);
 		void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo);

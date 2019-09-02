@@ -53,9 +53,10 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ReformatCopiedAction.cs" />
     <Compile Include="TriggerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="TriggerFactory.cs" />
     <Compile Include="Triggers\DataCurveTrigger.cs" />
   </ItemGroup>
   <ItemGroup>

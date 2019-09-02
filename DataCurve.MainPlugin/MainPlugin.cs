@@ -59,8 +59,6 @@ namespace DataCurve.MainPlugin
 		    return _config.PostBackProc(page, data, user, userRights);
 	    }
 
-		
-
 		public bool GetHasTriggers()
 		{
 			return _triggerHandler.GetHasTriggers();
@@ -112,18 +110,14 @@ namespace DataCurve.MainPlugin
 			return _triggerHandler.GetTriggerName(triggerNumber);
 		}
 
-	
-
-
-
-		public bool get_Condition(IPlugInAPI.strTrigActInfo actionInfo)
+		public bool get_Condition(IPlugInAPI.strTrigActInfo triggerInfo)
 		{
-			return true;
+			return _triggerHandler.GetCondition(triggerInfo);
 		}
 
 		public bool get_HasConditions(int triggerNumber)
 		{
-			return true;
+			return _triggerHandler.GetHasConditions(triggerNumber);
 		}
 
 		public void set_Condition(IPlugInAPI.strTrigActInfo actionInfo, bool value)
@@ -131,6 +125,7 @@ namespace DataCurve.MainPlugin
 			var eventRef = actionInfo.evRef;
 			var uid = actionInfo.UID;
 			Console.WriteLine($"setting condition to {value.ToString()} for evRef {eventRef} and UID {uid}");
+			_triggerHandler.SetCondition(actionInfo,value);
 		}
 
 		public void Dispose()

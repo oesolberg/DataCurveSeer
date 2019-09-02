@@ -41,7 +41,7 @@ namespace DataCurve.TriggerHandling
 		private List<ITrigger> CreateTriggerTypes()
 		{
 			var triggers = new List<ITrigger>();
-			triggers.Add(new DataCurveTrigger());
+			triggers.Add(new DataCurveTrigger(_logging,_collectionFactory));
 			return triggers;
 		}
 
@@ -204,11 +204,6 @@ namespace DataCurve.TriggerHandling
 			if (triggerToBuild == null) return;
 			triggerToBuild.SetCondition(trigActInfo, value);
 		}
-
-		//public void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo)
-		//{
-		//	throw new NotImplementedException();
-		//}
 
 		public bool TriggerReferencesDevice(IPlugInAPI.strTrigActInfo actionInfo, int deviceId)
 		{
