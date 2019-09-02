@@ -13,20 +13,26 @@ namespace DataCurve.TriggerHandling.Triggers
 		private ILogging _logging;
 		private DataCurveTriggerSettings _triggerSettings;
 		private ReformatCopiedAction _reformatCopiedAction;
+		private DataCurveUi _dataCurveUi;
 
-		public string GetTriggerName() => "DataCurveCondition";
+		public string GetTriggerName() => Utility.PluginName+": A data curve of device values ...";
 		public int TriggerNumber { get; } = 1;
 		public int UID { get; set; }
 		public int EvRef { get; set; }
 		public bool IsCondition => _isCondition;
 
-		public DataCurveTrigger(ILogging logging,IHsCollectionFactory collectionFactory, IReformatCopiedAction reformatCopiedAction = null)
+		public DataCurveTrigger(ILogging logging,IHsCollectionFactory collectionFactory, IReformatCopiedAction reformatCopiedAction = null, IDataCurveUi dataCurveUi=null)
 		{
 			_collectionFactory = collectionFactory;
 			_logging = logging;
 			if (reformatCopiedAction == null)
 			{
 				_reformatCopiedAction = new ReformatCopiedAction(_logging);
+			}
+
+			if (dataCurveUi == null)
+			{
+				_dataCurveUi=new DataCurveUi();
 			}
 		}
 
@@ -53,7 +59,7 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		public void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo)
 		{
-			throw new System.NotImplementedException();
+			GetSettingsFromTriggerInfo(trigActInfo);
 		}
 
 		public IPlugInAPI.strTrigActInfo GetTriggerActionInfo()
@@ -68,7 +74,7 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		public bool GetCondition(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			return true;
+			return _isCondition;
 		}
 
 		public bool GetTriggerConfigured(IPlugInAPI.strTrigActInfo actionInfo)
@@ -101,7 +107,7 @@ namespace DataCurve.TriggerHandling.Triggers
 			_triggerSettings = GetSettingsFromTriggerInfo(triggerInfo);
 			if (!_isCondition)
 				return "This can never be a trigger, only a condition";
-			return "jabba jabba";
+			return _dataCurveUi.Build(_triggerSettings);
 		}
 
 		private DataCurveTriggerSettings GetSettingsFromTriggerInfo(IPlugInAPI.strTrigActInfo triggerInfo)
