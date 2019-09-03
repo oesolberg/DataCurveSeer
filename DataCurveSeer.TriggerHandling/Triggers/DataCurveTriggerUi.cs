@@ -138,7 +138,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		private string CreateTimePicker(TimeSpan? timeSpanChosen, string uid, string uniqueControllerId)
 		{
-			var timePicker=new clsJQuery.jqTimeSpanPicker(Constants.TimeSpanKey,"",EventsPage,true);
+			var timePicker=new clsJQuery.jqTimeSpanPicker(Constants.TimeSpanKey + uid + uniqueControllerId, "",EventsPage,true);
 			timePicker.showDays = false;
 			timePicker.showSeconds = false;
 			timePicker.defaultTimeSpan=new TimeSpan(1,0,0);

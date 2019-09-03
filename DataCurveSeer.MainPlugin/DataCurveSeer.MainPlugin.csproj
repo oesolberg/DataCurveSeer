@@ -93,27 +93,23 @@
   <ItemGroup>
     <ProjectReference Include="..\DataCurveSeer.Common\DataCurveSeer.Common.csproj">
       <Project>{9e86b269-d735-495a-808e-911dab6a38a5}</Project>
-      <Name>DataCurve.Common</Name>
+      <Name>DataCurveSeer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataCurveSeer.Config\DataCurveSeer.Config.csproj">
       <Project>{6d67ccea-282f-4159-bc73-04e2f7512b17}</Project>
-      <Name>DataCurve.Config</Name>
+      <Name>DataCurveSeer.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataCurveSeer.HomeSeerHandling\DataCurveSeer.HomeSeerHandling.csproj">
       <Project>{d3701f6f-77a3-4572-b0d9-06b14b47a1f3}</Project>
-      <Name>DataCurve.HomeSeerHandling</Name>
+      <Name>DataCurveSeer.HomeSeerHandling</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataCurveSeer.Logging\DataCurveSeer.Logging.csproj">
       <Project>{773bd3f5-fff7-4100-8f45-61781515c0fb}</Project>
-      <Name>DataCurve.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataCurveSeer.Storage\DataCurveSeer.Storage.csproj">
-      <Project>{261c7a4b-3fe6-4d30-8d9e-df187701312f}</Project>
-      <Name>DataCurve.Storage</Name>
+      <Name>DataCurveSeer.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataCurveSeer.TriggerHandling\DataCurveSeer.TriggerHandling.csproj">
       <Project>{2b46a025-bb23-4f14-aad9-419987ecccf7}</Project>
-      <Name>DataCurve.TriggerHandling</Name>
+      <Name>DataCurveSeer.TriggerHandling</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

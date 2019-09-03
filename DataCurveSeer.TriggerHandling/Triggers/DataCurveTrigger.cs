@@ -217,7 +217,22 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 					{
 						triggerSettings.DeviceIdChosen = GetIntOrNullFromObject(formattedAction[dataKey]);
 					}
-
+					if (dataKey.Contains(Constants.RoomKey))
+					{
+						triggerSettings.RoomChosen = (string)(formattedAction[dataKey]);
+					}
+					if (dataKey.Contains(Constants.FloorKey))
+					{
+						triggerSettings.FloorChosen= (string)(formattedAction[dataKey]);
+					}
+					if (dataKey.Contains(Constants.TimeSpanKey))
+					{
+						//triggerSettings.TimeSpanChosen = (string)(formattedAction[dataKey]);
+					}
+					if (dataKey.Contains(Constants.AscDescKey))
+					{
+						triggerSettings.AscendingOrDescending = GetAscDescEnumFromObject(formattedAction[dataKey]);
+					}
 					//if (dataKey.Contains(Constants.IsConditionKey))
 					//{
 					//	_isCondition = false;
@@ -371,6 +386,19 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				return triggerSettings;
 			}
 			return null;
+		}
+
+		private AscDescEnum GetAscDescEnumFromObject(object o)
+		{
+			var ascDescEnumAsString = o as string;
+			if (o != null)
+			{
+				AscDescEnum ascDescEnumResult;
+				if (Enum.TryParse(ascDescEnumAsString, true, out ascDescEnumResult))
+					return ascDescEnumResult;
+			}
+
+			return AscDescEnum.Ascending;
 		}
 
 		private int? GetIntOrNullFromObject(object obj)

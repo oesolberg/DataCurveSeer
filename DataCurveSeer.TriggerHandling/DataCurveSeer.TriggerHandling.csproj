@@ -63,13 +63,13 @@
     <Compile Include="Triggers\DataCurveTriggerUi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataCurveSeer.Common\DataCurveSeer.Common.csproj">
-      <Project>{9e86b269-d735-495a-808e-911dab6a38a5}</Project>
-      <Name>DataCurve.Common</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\DataCurveSeer.Common\DataCurveSeer.Common.csproj">
+      <Project>{9e86b269-d735-495a-808e-911dab6a38a5}</Project>
+      <Name>DataCurveSeer.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
