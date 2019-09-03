@@ -10,12 +10,12 @@ using Scheduler;
 
 namespace DataCurve.TriggerHandling.Triggers
 {
-	public interface IDataCurveUi
+	public interface IDataCurveTriggerUi
 	{
 
 	}
 
-	internal sealed class DataCurveUi : IDataCurveUi
+	internal sealed class DataCurveTriggerUi : IDataCurveTriggerUi
 	{
 
 		private const string EventsPage = "events";
@@ -23,7 +23,7 @@ namespace DataCurve.TriggerHandling.Triggers
 		private FloorsRoomsAndDevices _floorsRomsAndDevices;
 		private IHSApplication _hs;
 
-		public DataCurveUi(IHomeSeerHandler homeSeerHandler,IHSApplication hs)
+		public DataCurveTriggerUi(IHomeSeerHandler homeSeerHandler,IHSApplication hs)
 		{
 			_homeSeerHandler = homeSeerHandler;
 			_hs = hs;
@@ -61,7 +61,7 @@ namespace DataCurve.TriggerHandling.Triggers
 		private string CreateAscendingDescendingDropdown(AscDescEnum ascDescChosen,string uid, string uniqueControllerId)
 		{
 			var ascDescValues = CreateAscDescValues();
-			var dropdown =CreateDropDownFromNameValueCollection("AscendingDescending_", Enum.GetName(typeof(AscDescEnum), ascDescChosen),
+			var dropdown =CreateDropDownFromNameValueCollection(Constants.AscDescKey, Enum.GetName(typeof(AscDescEnum), ascDescChosen),
 																	ascDescValues,uid,uniqueControllerId,noDefaultBlank :true);
 			return dropdown.Build();
 		}
@@ -76,21 +76,21 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		private string CreateFloorDropdown(string chosenFloor, string uid, string uniqueControllerId)
 		{
-			var dropDown = CreateDropDown("FloorDropdown_", chosenFloor, _floorsRomsAndDevices.Floors, uid,
+			var dropDown = CreateDropDown(Constants.FloorKey, chosenFloor, _floorsRomsAndDevices.Floors, uid,
 				uniqueControllerId);
 			return dropDown.Build();
 		}
 
 		private string CreateRoomDropdown(string chosenRoom, string uid, string uniqueControllerId)
 		{
-			var dropDown = CreateDropDown("RoomDropdown_", chosenRoom, _floorsRomsAndDevices.Rooms, uid,
+			var dropDown = CreateDropDown(Constants.RoomKey, chosenRoom, _floorsRomsAndDevices.Rooms, uid,
 				uniqueControllerId);
 			return dropDown.Build();
 		}
 
 		private string CreateDeviceDropdown(string floorChosen, string roomChosen, int? deviceId, string uid, string uniqueControllerId)
 		{
-			string deviceDropDownParameter = "DeviceDropdown_";
+			string deviceDropDownParameter = Constants.DeviceDropdownKey;
 			var devicesFromFloorAndRoom = _floorsRomsAndDevices.GetDevices(floorChosen, roomChosen);
 			var chosenDevice = -1;
 			var noSelectionMade= false;
@@ -138,7 +138,7 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		private string CreateTimePicker(TimeSpan? timeSpanChosen, string uid, string uniqueControllerId)
 		{
-			var timePicker=new clsJQuery.jqTimeSpanPicker("TimeSpan_","",EventsPage,true);
+			var timePicker=new clsJQuery.jqTimeSpanPicker(Constants.TimeSpanKey,"",EventsPage,true);
 			timePicker.showDays = false;
 			timePicker.showSeconds = false;
 			timePicker.defaultTimeSpan=new TimeSpan(1,0,0);

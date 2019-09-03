@@ -14,7 +14,7 @@ namespace DataCurve.TriggerHandling.Triggers
 		private ILogging _logging;
 		private DataCurveTriggerSettings _triggerSettings;
 		private ReformatCopiedAction _reformatCopiedAction;
-		private DataCurveUi _dataCurveUi;
+		private DataCurveTriggerUi _dataCurveUi;
 		private IHomeSeerHandler _homeSeerHandler;
 		private IHSApplication _hs;
 
@@ -25,7 +25,7 @@ namespace DataCurve.TriggerHandling.Triggers
 		public bool IsCondition => _isCondition;
 
 		public DataCurveTrigger(IHSApplication hs,ILogging logging, IHsCollectionFactory collectionFactory, 
-			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null, IDataCurveUi dataCurveUi = null)
+			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null, IDataCurveTriggerUi dataCurveUi = null)
 		{
 			_collectionFactory = collectionFactory;
 			_logging = logging;
@@ -38,7 +38,7 @@ namespace DataCurve.TriggerHandling.Triggers
 
 			if (dataCurveUi == null)
 			{
-				_dataCurveUi = new DataCurveUi(_homeSeerHandler,_hs);
+				_dataCurveUi = new DataCurveTriggerUi(_homeSeerHandler,_hs);
 			}
 
 		}
@@ -96,8 +96,89 @@ namespace DataCurve.TriggerHandling.Triggers
 
 		public IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData, IPlugInAPI.strTrigActInfo trigActInfo)
 		{
-			return new IPlugInAPI.strMultiReturn();
+			var returnData = new IPlugInAPI.strMultiReturn();
+			returnData.DataOut = trigActInfo.DataIn;
+			returnData.TrigActInfo = trigActInfo;
+			returnData.sResult = string.Empty;
+
+			if (postData == null || postData.Count < 1) return returnData;
+
+			object action = new Classes.action();
+			var formattedAction = _collectionFactory.GetActionsIfPossible(trigActInfo);
+
+			formattedAction = _reformatCopiedAction.Run(formattedAction, trigActInfo.UID, trigActInfo.evRef);
+			
+			postData.Add(Constants.TriggerTypeKey, this.ToString());//this.GetType().Name);// typeof(this).Name;//this.ToString());
+
+			postData.Add(Constants.IsConditionKey, _isCondition.ToString());
+
+			foreach (string dataKey in postData)
+			{
+				if (string.IsNullOrEmpty(dataKey)) continue;
+
+				//if (IsAction(dataKey, dataKey))
+				//{
+				//	var res = DoActionBasedOnDataKey(dataKey, postData, formattedAction);
+				//	if (res != null && res.ShouldBeStored)
+				//	{
+				//		formattedAction.AddObject(res.DataKey, (object)res.ObjectToStore);
+				//		formattedAction.AddObject(Constants.RegExpHandingErrorMessageParameter, (object)"");
+				//	}
+				//	else if (res != null && res.Success == false && !string.IsNullOrEmpty(res.ErrorMessage))
+				//	{
+				//		formattedAction.AddObject(Constants.RegExpHandingErrorMessageParameter, (object)res.ErrorMessage);
+				//	}
+				//	continue;
+				//}
+
+				//if (IsNotToBeStored(dataKey))
+				//{
+				//	continue;
+				//}
+
+				var strippedKey = StripKeyOfUidStuff(dataKey);
+				
+				formattedAction.AddObject(strippedKey, (object)postData[dataKey]);
+			}
+			object objAction = (object)formattedAction;
+			Utility.SerializeObject(ref objAction, ref returnData.DataOut);
+			returnData.sResult = string.Empty;
+
+			return returnData;
 		}
+
+		private string StripKeyOfUidStuff(string dataKey)
+		{
+			var indexOfUnderScore = dataKey.IndexOf('_', 2);
+			if (indexOfUnderScore > 0)
+			{
+				var maxLength = GetLengthToUse(dataKey, indexOfUnderScore);
+				dataKey = dataKey.Substring(0, maxLength);
+			}
+			return dataKey;
+		}
+
+		private int GetLengthToUse(string currentKey, int indexOfUnderScore)
+		{
+			var indexOfNextUnderscore = currentKey.IndexOf('_', indexOfUnderScore + 1);
+			while (indexOfNextUnderscore > 0 && indexOfNextUnderscore == indexOfUnderScore + 1)
+			{
+				indexOfUnderScore = indexOfNextUnderscore;
+				indexOfNextUnderscore = currentKey.IndexOf('_', indexOfUnderScore + 1);
+			}
+			//If this is a calendar entry then we need to get the calendar id as well
+			//if (currentKey.Contains('¤') && currentKey.IndexOf('¤') == indexOfUnderScore + 1)
+			//{
+			//	//Also get the end of calendar id 
+			//	var indexOfNextDelimiter = currentKey.IndexOf('¤', indexOfUnderScore + 2);
+			//	if (indexOfNextDelimiter > 0)
+			//		indexOfUnderScore = indexOfNextDelimiter;
+			//}
+			return indexOfUnderScore + 1;
+		}
+
+
+
 
 		//Summary of format info on collapsed trigger/condition
 		public string TriggerFormatUi(IPlugInAPI.strTrigActInfo actionInfo)
@@ -140,10 +221,10 @@ namespace DataCurve.TriggerHandling.Triggers
 				foreach (var dataKey in formattedAction.Keys)
 				{
 
-					//if (dataKey.Contains(Constants.GetSummaryTextParameter))
-					//{
-					//	triggerSettings.SearchText = (string)formattedAction[dataKey];
-					//}
+					if (dataKey.Contains(Constants.DeviceDropdownKey))
+					{
+						triggerSettings.DeviceIdChosen = GetIntOrNullFromObject(formattedAction[dataKey]);
+					}
 
 					//if (dataKey.Contains(Constants.IsConditionKey))
 					//{
@@ -297,6 +378,21 @@ namespace DataCurve.TriggerHandling.Triggers
 				_triggerSettings = triggerSettings;
 				return triggerSettings;
 			}
+			return null;
+		}
+
+		private int? GetIntOrNullFromObject(object obj)
+		{
+			var intString = obj as string;
+			if (intString != null)
+			{
+				int chosenDeviceId = -1;
+				if (int.TryParse(intString, out chosenDeviceId))
+				{
+					return chosenDeviceId;
+				}
+			}
+
 			return null;
 		}
 	}

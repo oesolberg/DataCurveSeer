@@ -57,11 +57,13 @@
     <Compile Include="TriggerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TriggerFactory.cs" />
+    <Compile Include="Triggers\Constants.cs" />
+    <Compile Include="Triggers\DataCurveTriggerProcessPostUi.cs" />
     <Compile Include="Triggers\DataCurveTrigger.cs" />
-    <Compile Include="Triggers\DataCurveUi.cs" />
+    <Compile Include="Triggers\DataCurveTriggerUi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataCurve.Common\DataCurve.Common.csproj">
+    <ProjectReference Include="..\DataCurveSeer.Common\DataCurveSeer.Common.csproj">
       <Project>{9e86b269-d735-495a-808e-911dab6a38a5}</Project>
       <Name>DataCurve.Common</Name>
     </ProjectReference>
