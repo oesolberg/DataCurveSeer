@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 
-namespace DataCurve.TriggerHandling
+namespace DataCurveSeer.TriggerHandling
 {
 	public interface IReformatCopiedAction
 	{

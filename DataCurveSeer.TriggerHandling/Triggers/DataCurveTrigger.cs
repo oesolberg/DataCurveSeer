@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Specialized;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
 
-namespace DataCurve.TriggerHandling.Triggers
+namespace DataCurveSeer.TriggerHandling.Triggers
 {
 	public class DataCurveTrigger : ITrigger
 	{
@@ -166,14 +166,6 @@ namespace DataCurve.TriggerHandling.Triggers
 				indexOfUnderScore = indexOfNextUnderscore;
 				indexOfNextUnderscore = currentKey.IndexOf('_', indexOfUnderScore + 1);
 			}
-			//If this is a calendar entry then we need to get the calendar id as well
-			//if (currentKey.Contains('¤') && currentKey.IndexOf('¤') == indexOfUnderScore + 1)
-			//{
-			//	//Also get the end of calendar id 
-			//	var indexOfNextDelimiter = currentKey.IndexOf('¤', indexOfUnderScore + 2);
-			//	if (indexOfNextDelimiter > 0)
-			//		indexOfUnderScore = indexOfNextDelimiter;
-			//}
 			return indexOfUnderScore + 1;
 		}
 

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HomeSeerAPI;
 
-namespace DataCurve.Common.Interfaces
+namespace DataCurveSeer.Common.Interfaces
 {
     public interface IMainPlugin
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataCurve.Common.Interfaces
+namespace DataCurveSeer.Common.Interfaces
 {
 	public interface IIniSettings : IDisposable
 	{

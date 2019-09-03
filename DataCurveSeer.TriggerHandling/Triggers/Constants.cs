@@ -1,4 +1,4 @@
-﻿namespace DataCurve.TriggerHandling.Triggers
+﻿namespace DataCurveSeer.TriggerHandling.Triggers
 {
 	public class Constants
 	{

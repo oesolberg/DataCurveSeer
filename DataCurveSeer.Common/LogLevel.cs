@@ -1,4 +1,4 @@
-﻿namespace DataCurve.Common
+﻿namespace DataCurveSeer.Common
 {
 	public enum LogLevel
 	{

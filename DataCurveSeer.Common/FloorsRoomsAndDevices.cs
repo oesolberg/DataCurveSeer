@@ -4,7 +4,7 @@ using System.Linq;
 using HomeSeerAPI;
 using Scheduler.Classes;
 
-namespace DataCurve.Common
+namespace DataCurveSeer.Common
 {
 	public class FloorsRoomsAndDevices
 	{

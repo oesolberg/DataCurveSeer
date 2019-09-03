@@ -1,8 +1,8 @@
 ﻿using System;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
 
-namespace DataCurve.Common
+namespace DataCurveSeer.Common
 {
 	public class IniSettings : IIniSettings, IDisposable
 	{

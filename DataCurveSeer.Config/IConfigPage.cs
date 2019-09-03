@@ -1,4 +1,4 @@
-﻿namespace DataCurve.Config
+﻿namespace DataCurveSeer.Config
 {
 	public interface IConfigPage
 	{

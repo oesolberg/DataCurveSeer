@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using System.Text;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
 using Scheduler;
 
-namespace DataCurve.Config
+namespace DataCurveSeer.Config
 {
 	internal class ConfigAbout : PageBuilderAndMenu.clsPageBuilder, IConfigPage
 	{

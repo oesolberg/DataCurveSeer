@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 
-namespace DataCurve.Common
+namespace DataCurveSeer.Common
 {
 
 

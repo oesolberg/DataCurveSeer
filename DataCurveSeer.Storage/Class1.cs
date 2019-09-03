@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataCurve.Storage
+namespace DataCurveSeer.Storage
 {
     public class Class1
     {

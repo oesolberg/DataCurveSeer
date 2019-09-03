@@ -4,14 +4,14 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
-using DataCurve.Config;
-using DataCurve.HomeSeerHandling;
-using DataCurve.TriggerHandling;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
+using DataCurveSeer.Config;
+using DataCurveSeer.HomeSeerHandling;
+using DataCurveSeer.TriggerHandling;
 using HomeSeerAPI;
 
-namespace DataCurve.MainPlugin
+namespace DataCurveSeer.MainPlugin
 {
     public class MainPlugin:IMainPlugin,IDisposable 
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using HomeSeerAPI;
 
-namespace DataCurve.Common.Interfaces
+namespace DataCurveSeer.Common.Interfaces
 {
 	public interface ITriggerHandler
 	{

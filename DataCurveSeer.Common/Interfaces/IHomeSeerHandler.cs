@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Scheduler.Classes;
 
-namespace DataCurve.Common.Interfaces
+namespace DataCurveSeer.Common.Interfaces
 {
 	public interface IHomeSeerHandler
 	{

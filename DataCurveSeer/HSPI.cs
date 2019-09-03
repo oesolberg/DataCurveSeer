@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
-using DataCurve.Logging;
-using DataCurve.MainPlugin;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
+using DataCurveSeer.Logging;
+using DataCurveSeer.MainPlugin;
 using HomeSeerAPI;
 using Hspi;
 using Scheduler;
 
-namespace HSPI_DataCurve
+namespace HSPI_DataCurveSeer
 {
 	// ReSharper disable once InconsistentNaming
 	public class HSPI : HspiBase

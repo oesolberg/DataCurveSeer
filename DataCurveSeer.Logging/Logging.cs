@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
 using Serilog;
 using Serilog.Core;
 
-namespace DataCurve.Logging
+namespace DataCurveSeer.Logging
 {
 	public class Logging : ILogging
 	{

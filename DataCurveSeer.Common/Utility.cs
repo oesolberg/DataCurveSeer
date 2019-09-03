@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using HomeSeerAPI;
 
-namespace DataCurve.Common
+namespace DataCurveSeer.Common
 {
 	public class Utility
 	{

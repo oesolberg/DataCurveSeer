@@ -4,12 +4,12 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
-using DataCurve.TriggerHandling.Triggers;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
+using DataCurveSeer.TriggerHandling.Triggers;
 using HomeSeerAPI;
 
-namespace DataCurve.TriggerHandling
+namespace DataCurveSeer.TriggerHandling
 {
 
 	public class TriggerHandler : ITriggerHandler, IDisposable

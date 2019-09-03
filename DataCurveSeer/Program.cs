@@ -1,6 +1,6 @@
 using Hspi;
 
-namespace HSPI_DataCurve
+namespace HSPI_DataCurveSeer
 {
 	internal class Program
 	{

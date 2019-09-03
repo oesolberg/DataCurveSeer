@@ -1,7 +1,7 @@
 ﻿
 using HomeSeerAPI;
 
-namespace DataCurve.Common
+namespace DataCurveSeer.Common
 {
 	public class HsCollectionFactory : IHsCollectionFactory
 	{

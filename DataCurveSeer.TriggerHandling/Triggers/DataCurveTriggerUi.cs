@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
 using System.Text;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
 using Scheduler;
 
-namespace DataCurve.TriggerHandling.Triggers
+namespace DataCurveSeer.TriggerHandling.Triggers
 {
 	public interface IDataCurveTriggerUi
 	{

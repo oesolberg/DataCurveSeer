@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataCurve.Common;
-using DataCurve.Common.Interfaces;
+using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
 
-namespace DataCurve.Config
+namespace DataCurveSeer.Config
 {
 	public interface IMainConfig
 	{
