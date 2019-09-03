@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using DataCurve.Common;
 using DataCurve.Common.Interfaces;
 using HomeSeerAPI;
@@ -14,17 +15,22 @@ namespace DataCurve.TriggerHandling.Triggers
 		private DataCurveTriggerSettings _triggerSettings;
 		private ReformatCopiedAction _reformatCopiedAction;
 		private DataCurveUi _dataCurveUi;
+		private IHomeSeerHandler _homeSeerHandler;
+		private IHSApplication _hs;
 
-		public string GetTriggerName() => Utility.PluginName+": A data curve of device values ...";
+		public string GetTriggerName() => Utility.PluginName + ": A data curve of device values ...";
 		public int TriggerNumber { get; } = 1;
 		public int UID { get; set; }
 		public int EvRef { get; set; }
 		public bool IsCondition => _isCondition;
 
-		public DataCurveTrigger(ILogging logging,IHsCollectionFactory collectionFactory, IReformatCopiedAction reformatCopiedAction = null, IDataCurveUi dataCurveUi=null)
+		public DataCurveTrigger(IHSApplication hs,ILogging logging, IHsCollectionFactory collectionFactory, 
+			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null, IDataCurveUi dataCurveUi = null)
 		{
 			_collectionFactory = collectionFactory;
 			_logging = logging;
+			_homeSeerHandler = homeSeerHandler;
+			_hs = hs;
 			if (reformatCopiedAction == null)
 			{
 				_reformatCopiedAction = new ReformatCopiedAction(_logging);
@@ -32,8 +38,9 @@ namespace DataCurve.TriggerHandling.Triggers
 
 			if (dataCurveUi == null)
 			{
-				_dataCurveUi=new DataCurveUi();
+				_dataCurveUi = new DataCurveUi(_homeSeerHandler,_hs);
 			}
+
 		}
 
 		public string GetSubTriggerName(int subTriggerNumber)
@@ -105,20 +112,24 @@ namespace DataCurve.TriggerHandling.Triggers
 		{
 			var uid = triggerInfo.UID.ToString();
 			_triggerSettings = GetSettingsFromTriggerInfo(triggerInfo);
+
 			if (!_isCondition)
 				return "This can never be a trigger, only a condition";
+			_triggerSettings.Uid = triggerInfo.UID.ToString();
+
+			_triggerSettings.UniqueControllerId = uniqueControlId;
 			return _dataCurveUi.Build(_triggerSettings);
 		}
 
 		private DataCurveTriggerSettings GetSettingsFromTriggerInfo(IPlugInAPI.strTrigActInfo triggerInfo)
 		{
-			
-			_triggerInfo= triggerInfo;
+
+			_triggerInfo = triggerInfo;
 			var formattedAction = _collectionFactory.GetActionsIfPossible(triggerInfo);
 
-			if (formattedAction != null && formattedAction.Keys.Count > 0)
+			if (formattedAction != null)//&& formattedAction.Keys.Count > 0)
 			{
-				var uidAndEvRef = $"{triggerInfo.UID.ToString()}_{triggerInfo.evRef.ToString()}_"; ;
+				var uidAndEvRef = $"{triggerInfo.UID.ToString()}_{triggerInfo.evRef.ToString()}_";
 				//if (TriggerShouldBeUpdatedToNewVersion(formattedAction))
 				//{
 				//	formattedAction = UpdateFormattedAction(formattedAction, trigActInfo.UID, trigActInfo.evRef);
@@ -292,5 +303,18 @@ namespace DataCurve.TriggerHandling.Triggers
 
 	internal class DataCurveTriggerSettings
 	{
+		public string FloorChosen { get; set; }
+		public string RoomChosen { get; set; }
+		public AscDescEnum AscendingOrDescending { get; set; }
+		public string Uid { get; set; }
+		public string UniqueControllerId { get; set; }
+		public int? DeviceIdChosen { get; set; }
+		public TimeSpan? TimeSpanChosen { get; set; }
+	}
+
+	internal enum AscDescEnum
+	{
+		Ascending = 1,
+		Descending = 2
 	}
 }

@@ -3,19 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve", "DataCurve\DataCurve.csproj", "{5BD54FA0-EF98-43C4-889B-5CCAD8A72FB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer", "DataCurveSeer\DataCurveSeer.csproj", "{5BD54FA0-EF98-43C4-889B-5CCAD8A72FB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve.MainPlugin", "DataCurve.MainPlugin\DataCurve.MainPlugin.csproj", "{4BA9E41F-4ACB-445F-A7B4-87DC11FC04AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.MainPlugin", "DataCurveSeer.MainPlugin\DataCurveSeer.MainPlugin.csproj", "{4BA9E41F-4ACB-445F-A7B4-87DC11FC04AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve.Common", "DataCurve.Common\DataCurve.Common.csproj", "{9E86B269-D735-495A-808E-911DAB6A38A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.Common", "DataCurveSeer.Common\DataCurveSeer.Common.csproj", "{9E86B269-D735-495A-808E-911DAB6A38A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve.Storage", "DataCurve.Storage\DataCurve.Storage.csproj", "{261C7A4B-3FE6-4D30-8D9E-DF187701312F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.Storage", "DataCurveSeer.Storage\DataCurveSeer.Storage.csproj", "{261C7A4B-3FE6-4D30-8D9E-DF187701312F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve.Logging", "DataCurve.Logging\DataCurve.Logging.csproj", "{773BD3F5-FFF7-4100-8F45-61781515C0FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.Logging", "DataCurveSeer.Logging\DataCurveSeer.Logging.csproj", "{773BD3F5-FFF7-4100-8F45-61781515C0FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve.Config", "DataCurve.Config\DataCurve.Config.csproj", "{6D67CCEA-282F-4159-BC73-04E2F7512B17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.Config", "DataCurveSeer.Config\DataCurveSeer.Config.csproj", "{6D67CCEA-282F-4159-BC73-04E2F7512B17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurve.TriggerHandling", "DataCurve.TriggerHandling\DataCurve.TriggerHandling.csproj", "{2B46A025-BB23-4F14-AAD9-419987ECCCF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.TriggerHandling", "DataCurveSeer.TriggerHandling\DataCurveSeer.TriggerHandling.csproj", "{2B46A025-BB23-4F14-AAD9-419987ECCCF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCurveSeer.HomeSeerHandling", "DataCurveSeer.HomeSeerHandling\DataCurveSeer.HomeSeerHandling.csproj", "{D3701F6F-77A3-4572-B0D9-06B14B47A1F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{2B46A025-BB23-4F14-AAD9-419987ECCCF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B46A025-BB23-4F14-AAD9-419987ECCCF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B46A025-BB23-4F14-AAD9-419987ECCCF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3701F6F-77A3-4572-B0D9-06B14B47A1F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3701F6F-77A3-4572-B0D9-06B14B47A1F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3701F6F-77A3-4572-B0D9-06B14B47A1F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3701F6F-77A3-4572-B0D9-06B14B47A1F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

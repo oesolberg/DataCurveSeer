@@ -8,7 +8,7 @@ namespace DataCurve.Common
 {
 	public class Utility
 	{
-		public const string PluginName = "DataCurve";
+		public const string PluginName = "DataCurveSeer";
 		public const string IniFile = PluginName+".ini";
 		public static string ExePath = Directory.GetCurrentDirectory();
 		public static string InstanceFriendlyName => "";

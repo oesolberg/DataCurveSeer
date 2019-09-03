@@ -22,16 +22,18 @@ namespace DataCurve.TriggerHandling
 		private bool _disposed;
 		private readonly List<ITrigger> _triggerTypes = new List<ITrigger>();
 		private List<ITrigger> _triggers = new List<ITrigger>();
+		private IHomeSeerHandler _homeSeerHandler;
 
 		protected internal const string TriggerTypeKey = "TriggerType";
 
-		public TriggerHandler(IHSApplication hs, IAppCallbackAPI callback, IIniSettings iniSettings, ILogging logging, IHsCollectionFactory collectionFactory)
+		public TriggerHandler(IHSApplication hs, IAppCallbackAPI callback, IIniSettings iniSettings, ILogging logging, IHsCollectionFactory collectionFactory,IHomeSeerHandler homeSeerHandler)
 		{
 			_hs = hs;
 			_callback = callback;
 			_iniSettings = iniSettings;
 			_logging = logging;
 			_collectionFactory = collectionFactory;
+			_homeSeerHandler = homeSeerHandler;
 			_triggerTypes = CreateTriggerTypes();
 			GetPluginTriggersFromHomeSeer();
 
@@ -41,7 +43,7 @@ namespace DataCurve.TriggerHandling
 		private List<ITrigger> CreateTriggerTypes()
 		{
 			var triggers = new List<ITrigger>();
-			triggers.Add(new DataCurveTrigger(_logging,_collectionFactory));
+			triggers.Add(new DataCurveTrigger(_hs,_logging,_collectionFactory,_homeSeerHandler));
 			return triggers;
 		}
 
@@ -69,7 +71,7 @@ namespace DataCurve.TriggerHandling
 		{
 			var triggerType = (string)settings[TriggerTypeKey];
 			object[] argObjects = new object[] { _logging, this, _callback };
-			var triggerToAdd = TriggerFactory.Get(triggerType, _logging, this, _callback, _collectionFactory);
+			var triggerToAdd = TriggerFactory.Get(_hs,triggerType, _logging, this, _callback, _collectionFactory, _homeSeerHandler);
 			if (triggerToAdd != null)
 			{
 				triggerToAdd.AddSettingsFromTrigActionInfo(trigActInfo);
@@ -106,6 +108,7 @@ namespace DataCurve.TriggerHandling
 		public bool GetHasConditions(int triggerNumber)
 		{
 			var trigger = FindCorrectTriggerTypeInfo(triggerNumber);
+			if (trigger == null) return false;
 			return trigger.GetHasConditions();
 		}
 

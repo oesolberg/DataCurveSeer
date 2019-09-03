@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DataCurve.Common;
 using DataCurve.Common.Interfaces;
 using DataCurve.Config;
+using DataCurve.HomeSeerHandling;
 using DataCurve.TriggerHandling;
 using HomeSeerAPI;
 
@@ -22,6 +23,7 @@ namespace DataCurve.MainPlugin
 	    private readonly IAppCallbackAPI _callback;
 	    private ITriggerHandler _triggerHandler;
 	    private HsCollectionFactory _collectionFactory;
+	    private IHomeSeerHandler _homeSeerHandler;
 
 	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback,HsCollectionFactory collectionFactory)
 	    {
@@ -38,10 +40,11 @@ namespace DataCurve.MainPlugin
 		    _logging.Log($"{Utility.PluginName} MainPlugin InitIo started");
 			_config = new MainConfig(_logging, _hs,  _iniSettings, _callback, this);
 		    _config.RegisterConfigs();
+			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
+			_triggerHandler = new TriggerHandler(_hs,_callback,_iniSettings,_logging, _collectionFactory, _homeSeerHandler);
 
 		    _logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
-		    _triggerHandler = new TriggerHandler(_hs,_callback,_iniSettings,_logging, _collectionFactory);
-			return "";
+		    return "";
 	    }
 
 	    public void ShutDownIO()
