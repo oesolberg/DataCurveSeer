@@ -57,10 +57,13 @@
     <Compile Include="TriggerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TriggerFactory.cs" />
+    <Compile Include="AscDescEnum.cs" />
     <Compile Include="Triggers\Constants.cs" />
     <Compile Include="Triggers\DataCurveTriggerProcessPostUi.cs" />
     <Compile Include="Triggers\DataCurveTrigger.cs" />
+    <Compile Include="Triggers\DataCurveTriggerSettings.cs" />
     <Compile Include="Triggers\DataCurveTriggerUi.cs" />
+    <Compile Include="ParameterExtraction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

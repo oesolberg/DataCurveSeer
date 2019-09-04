@@ -30,13 +30,17 @@ namespace DataCurveSeer.Common
 		public IEnumerable<DeviceFromHomeSeer> GetDevices(string floorChosen, string roomChosen)
 		{
 			var deviceList = Devices;
+			if (!string.IsNullOrEmpty(roomChosen) && !string.IsNullOrEmpty(floorChosen))
+			{
+				return Devices.Where(x => x.RoomName == roomChosen && x.FloorName==floorChosen).ToList();
+			}
 			if (!string.IsNullOrEmpty(floorChosen))
 			{
-				deviceList = Devices.Where(x => x.FloorName == floorChosen).ToList();
+				return Devices.Where(x => x.FloorName == floorChosen).ToList();
 			}
 			if (!string.IsNullOrEmpty(roomChosen))
 			{
-				deviceList = Devices.Where(x => x.RoomName == roomChosen).ToList();
+				return Devices.Where(x => x.RoomName == roomChosen).ToList();
 			}
 			return deviceList;
 		}

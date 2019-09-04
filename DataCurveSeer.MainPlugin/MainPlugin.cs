@@ -36,8 +36,9 @@ namespace DataCurveSeer.MainPlugin
 	    }
 	    public string InitIO(string port)
 	    {
-
-		    _logging.Log($"{Utility.PluginName} MainPlugin InitIo started");
+		    var initLogString = $"{Utility.PluginName} MainPlugin InitIo started";
+			Console.WriteLine(initLogString);
+			_logging.Log(initLogString);
 			_config = new MainConfig(_logging, _hs,  _iniSettings, _callback, this);
 		    _config.RegisterConfigs();
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);

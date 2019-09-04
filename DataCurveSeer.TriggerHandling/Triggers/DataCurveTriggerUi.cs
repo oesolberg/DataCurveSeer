@@ -23,7 +23,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		private FloorsRoomsAndDevices _floorsRomsAndDevices;
 		private IHSApplication _hs;
 
-		public DataCurveTriggerUi(IHomeSeerHandler homeSeerHandler,IHSApplication hs)
+		public DataCurveTriggerUi(IHomeSeerHandler homeSeerHandler, IHSApplication hs)
 		{
 			_homeSeerHandler = homeSeerHandler;
 			_hs = hs;
@@ -39,7 +39,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("<table>");
-			
+
 			var floorDropDown = CreateFloorDropdown(triggerSettings.FloorChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
 			var roomDropdown = CreateRoomDropdown(triggerSettings.RoomChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
 			if (!_floorsRomsAndDevices.RoomExists(triggerSettings.RoomChosen))
@@ -50,25 +50,25 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			{
 				triggerSettings.FloorChosen = "";
 			}
-			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen,triggerSettings.DeviceIdChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
-			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen,triggerSettings.Uid,triggerSettings.UniqueControllerId);
-			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending,triggerSettings.Uid,triggerSettings.UniqueControllerId);
+			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen, triggerSettings.DeviceIdChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
+			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
+			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending, triggerSettings.Uid, triggerSettings.UniqueControllerId);
 			sb.AppendLine($"<tr><td>A data curve of device values for the device {floorDropDown} {roomDropdown}  {deviceDropdown} has had {ascendingDescendingDropdown} curve for the last {timePicker} minutes</td></tr>");
 			sb.AppendLine("</table>");
 			return sb.ToString();
 		}
 
-		private string CreateAscendingDescendingDropdown(AscDescEnum ascDescChosen,string uid, string uniqueControllerId)
+		private string CreateAscendingDescendingDropdown(AscDescEnum ascDescChosen, string uid, string uniqueControllerId)
 		{
 			var ascDescValues = CreateAscDescValues();
-			var dropdown =CreateDropDownFromNameValueCollection(Constants.AscDescKey, Enum.GetName(typeof(AscDescEnum), ascDescChosen),
-																	ascDescValues,uid,uniqueControllerId,noDefaultBlank :true);
+			var dropdown = CreateDropDownFromNameValueCollection(Constants.AscDescKey, Enum.GetName(typeof(AscDescEnum), ascDescChosen),
+																	ascDescValues, uid, uniqueControllerId, noDefaultBlank: true);
 			return dropdown.Build();
 		}
 
 		private NameValueCollection CreateAscDescValues()
 		{
-			var returnList=new NameValueCollection();
+			var returnList = new NameValueCollection();
 			returnList.Add(Enum.GetName(typeof(AscDescEnum), AscDescEnum.Ascending), "an ascending");
 			returnList.Add(Enum.GetName(typeof(AscDescEnum), AscDescEnum.Descending), "a descending");
 			return returnList;
@@ -93,7 +93,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			string deviceDropDownParameter = Constants.DeviceDropdownKey;
 			var devicesFromFloorAndRoom = _floorsRomsAndDevices.GetDevices(floorChosen, roomChosen);
 			var chosenDevice = -1;
-			var noSelectionMade= false;
+			var noSelectionMade = false;
 			if (deviceId.HasValue)
 			{
 				chosenDevice = deviceId.Value;
@@ -112,10 +112,10 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			return listToReturn.Build();
 
 		}
-		private clsJQuery.jqDropList CreateDropDownFromNameValueCollection(string dropDownParameter, string chosenValue, NameValueCollection unitList, string uid, string uniqueControllerId,bool noDefaultBlank=false)
+		private clsJQuery.jqDropList CreateDropDownFromNameValueCollection(string dropDownParameter, string chosenValue, NameValueCollection unitList, string uid, string uniqueControllerId, bool noDefaultBlank = false)
 		{
 			var dropList = new clsJQuery.jqDropList(dropDownParameter + uid + uniqueControllerId, EventsPage, true);
-			if(!noDefaultBlank)
+			if (!noDefaultBlank)
 				dropList.AddItem("", "", false);
 			foreach (var unit in unitList.AllKeys)
 			{
@@ -130,7 +130,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			dropList.AddItem("", "", false);
 			foreach (var unit in unitList)
 			{
-				dropList.AddItem(unit, unit, unit == chosenValue);
+				if (!string.IsNullOrEmpty(unit))
+					dropList.AddItem(unit, unit, unit == chosenValue);
 			}
 			return dropList;
 		}
@@ -138,10 +139,10 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		private string CreateTimePicker(TimeSpan? timeSpanChosen, string uid, string uniqueControllerId)
 		{
-			var timePicker=new clsJQuery.jqTimeSpanPicker(Constants.TimeSpanKey + uid + uniqueControllerId, "",EventsPage,true);
+			var timePicker = new clsJQuery.jqTimeSpanPicker(Constants.TimeSpanKey + uid + uniqueControllerId, "", EventsPage, true);
 			timePicker.showDays = false;
 			timePicker.showSeconds = false;
-			timePicker.defaultTimeSpan=new TimeSpan(1,0,0);
+			timePicker.defaultTimeSpan = new TimeSpan(1, 0, 0);
 			if (timeSpanChosen.HasValue)
 			{
 				timePicker.defaultTimeSpan = timeSpanChosen.Value;

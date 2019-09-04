@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
 using HomeSeerAPI;
@@ -24,8 +25,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		public int EvRef { get; set; }
 		public bool IsCondition => _isCondition;
 
-		public DataCurveTrigger(IHSApplication hs,ILogging logging, IHsCollectionFactory collectionFactory, 
-			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null, IDataCurveTriggerUi dataCurveUi = null)
+		public DataCurveTrigger(IHSApplication hs, ILogging logging, IHsCollectionFactory collectionFactory,
+			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null,
+			IDataCurveTriggerUi dataCurveUi = null)
 		{
 			_collectionFactory = collectionFactory;
 			_logging = logging;
@@ -38,7 +40,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 			if (dataCurveUi == null)
 			{
-				_dataCurveUi = new DataCurveTriggerUi(_homeSeerHandler,_hs);
+				_dataCurveUi = new DataCurveTriggerUi(_homeSeerHandler, _hs);
 			}
 
 		}
@@ -94,7 +96,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			return false;
 		}
 
-		public IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData, IPlugInAPI.strTrigActInfo trigActInfo)
+		public IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData,
+			IPlugInAPI.strTrigActInfo trigActInfo)
 		{
 			var returnData = new IPlugInAPI.strMultiReturn();
 			returnData.DataOut = trigActInfo.DataIn;
@@ -107,8 +110,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			var formattedAction = _collectionFactory.GetActionsIfPossible(trigActInfo);
 
 			formattedAction = _reformatCopiedAction.Run(formattedAction, trigActInfo.UID, trigActInfo.evRef);
-			
-			postData.Add(Constants.TriggerTypeKey, this.ToString());//this.GetType().Name);// typeof(this).Name;//this.ToString());
+
+			postData.Add(Constants.TriggerTypeKey,
+				this.ToString()); //this.GetType().Name);// typeof(this).Name;//this.ToString());
 
 			postData.Add(Constants.IsConditionKey, _isCondition.ToString());
 
@@ -116,31 +120,12 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			{
 				if (string.IsNullOrEmpty(dataKey)) continue;
 
-				//if (IsAction(dataKey, dataKey))
-				//{
-				//	var res = DoActionBasedOnDataKey(dataKey, postData, formattedAction);
-				//	if (res != null && res.ShouldBeStored)
-				//	{
-				//		formattedAction.AddObject(res.DataKey, (object)res.ObjectToStore);
-				//		formattedAction.AddObject(Constants.RegExpHandingErrorMessageParameter, (object)"");
-				//	}
-				//	else if (res != null && res.Success == false && !string.IsNullOrEmpty(res.ErrorMessage))
-				//	{
-				//		formattedAction.AddObject(Constants.RegExpHandingErrorMessageParameter, (object)res.ErrorMessage);
-				//	}
-				//	continue;
-				//}
-
-				//if (IsNotToBeStored(dataKey))
-				//{
-				//	continue;
-				//}
-
 				var strippedKey = StripKeyOfUidStuff(dataKey);
-				
-				formattedAction.AddObject(strippedKey, (object)postData[dataKey]);
+
+				formattedAction.AddObject(strippedKey, (object) postData[dataKey]);
 			}
-			object objAction = (object)formattedAction;
+
+			object objAction = (object) formattedAction;
 			Utility.SerializeObject(ref objAction, ref returnData.DataOut);
 			returnData.sResult = string.Empty;
 
@@ -155,6 +140,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				var maxLength = GetLengthToUse(dataKey, indexOfUnderScore);
 				dataKey = dataKey.Substring(0, maxLength);
 			}
+
 			return dataKey;
 		}
 
@@ -166,6 +152,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				indexOfUnderScore = indexOfNextUnderscore;
 				indexOfNextUnderscore = currentKey.IndexOf('_', indexOfUnderScore + 1);
 			}
+
 			return indexOfUnderScore + 1;
 		}
 
@@ -200,7 +187,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			_triggerInfo = triggerInfo;
 			var formattedAction = _collectionFactory.GetActionsIfPossible(triggerInfo);
 
-			if (formattedAction != null)//&& formattedAction.Keys.Count > 0)
+			if (formattedAction != null) //&& formattedAction.Keys.Count > 0)
 			{
 				var uidAndEvRef = $"{triggerInfo.UID.ToString()}_{triggerInfo.evRef.ToString()}_";
 				//if (TriggerShouldBeUpdatedToNewVersion(formattedAction))
@@ -215,222 +202,63 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 					if (dataKey.Contains(Constants.DeviceDropdownKey))
 					{
-						triggerSettings.DeviceIdChosen = GetIntOrNullFromObject(formattedAction[dataKey]);
+						triggerSettings.DeviceIdChosen =
+							ParameterExtraction.GetIntOrNullFromObject(formattedAction[dataKey]);
 					}
+
 					if (dataKey.Contains(Constants.RoomKey))
 					{
-						triggerSettings.RoomChosen = (string)(formattedAction[dataKey]);
+						triggerSettings.RoomChosen = (string) (formattedAction[dataKey]);
 					}
+
 					if (dataKey.Contains(Constants.FloorKey))
 					{
-						triggerSettings.FloorChosen= (string)(formattedAction[dataKey]);
+						triggerSettings.FloorChosen = (string) (formattedAction[dataKey]);
 					}
+
+					if (dataKey.Contains(Constants.IsConditionKey))
+					{
+						triggerSettings.IsCondition = ParameterExtraction.GetBoolFromObject(formattedAction[dataKey]);
+					}
+
 					if (dataKey.Contains(Constants.TimeSpanKey))
 					{
-						//triggerSettings.TimeSpanChosen = (string)(formattedAction[dataKey]);
+						triggerSettings.TimeSpanChosen = ParameterExtraction.GetTimeSpanFromObject(formattedAction[dataKey]);
 					}
+
 					if (dataKey.Contains(Constants.AscDescKey))
 					{
-						triggerSettings.AscendingOrDescending = GetAscDescEnumFromObject(formattedAction[dataKey]);
+						triggerSettings.AscendingOrDescending = ParameterExtraction.GetAscDescEnumFromObject(formattedAction[dataKey]);
 					}
-					//if (dataKey.Contains(Constants.IsConditionKey))
-					//{
-					//	_isCondition = false;
-					//	var boolAsString = (string)formattedAction[dataKey];
-					//	if (boolAsString.ToUpper() == true.ToString().ToUpper())
-					//	{
-					//		_isCondition = true;
-					//	}
-					//}
-
-					//if (dataKey.StartsWith(Constants.CalendarCheckboxKey))
-					//{
-					//	var calendarStatus = (string)formattedAction[dataKey];
-					//	if (calendarStatus == Constants.CheckedCalendar)
-					//	{
-					//		triggerSettings.CheckedCalendars.Add(GetCalendarHashCode(dataKey, uidAndEvRef));
-					//	}
-					//}
-
-					//if (dataKey.Contains(Constants.AdvancedMenuScrollingParameter))
-					//{
-					//	var actionString = (string)formattedAction[dataKey];
-					//	if (actionString.Contains("_open"))
-					//	{
-					//		triggerSettings.ScrollerOpen = true;
-					//	}
-
-					//}
-					//if (dataKey.Contains(Constants.TriggerDropdownParameter))
-					//{
-					//	var triggerChoiceString = (string)formattedAction[dataKey];
-					//	if (int.TryParse(triggerChoiceString, out var triggerChoice))
-					//	{
-					//		triggerSettings.OccurenceType = triggerChoice;
-					//	}
-					//}
-					//if (dataKey.Contains(Constants.TextOrRegDropdownId))
-					//{
-					//	var textOrRegDropdownChoiceString = (string)formattedAction[dataKey];
-					//	if (int.TryParse(textOrRegDropdownChoiceString, out var triggerChoice))
-					//	{
-					//		triggerSettings.UseRegularExpression = (triggerChoice == 2);
-					//	}
-					//}
-
-					//if (dataKey.Contains(Constants.WithinTimeUnitDropDownParameter))
-					//{
-					//	var triggerChoiceString = (string)formattedAction[dataKey];
-					//	if (int.TryParse(triggerChoiceString, out var triggerChoice))
-					//	{
-					//		triggerSettings.DuringTimeUnit = triggerChoice;
-					//	}
-					//}
-
-					//if (dataKey.Contains(Constants.WithinNumberTextParameter))
-					//{
-					//	var triggerChoiceString = (string)formattedAction[dataKey];
-					//	if (int.TryParse(triggerChoiceString, out var triggerChoice))
-					//	{
-					//		triggerSettings.DuringNumber = triggerChoice;
-					//	}
-					//}
-					//if (dataKey.Contains(Constants.WithingPeriodeFromNowUnitParameter))
-					//{
-					//	var triggerChoiceString = (string)formattedAction[dataKey];
-					//	if (int.TryParse(triggerChoiceString, out var triggerChoice))
-					//	{
-					//		triggerSettings.DuringPeriodeFromNow = triggerChoice;
-					//	}
-					//}
-					//if (dataKey.Contains(Constants.StartOfOccurenceParameter))
-					//{
-					//	var timespanStartString = (string)formattedAction[dataKey];
-					//	if (TryParseTimespanFromHS(timespanStartString, out var timespanStart))
-					//	{
-					//		triggerSettings.BetweenStartOfOccurence = timespanStart;
-					//	}
-					//}
-					//if (dataKey.Contains(Constants.EndOfOccurenceParameter))
-					//{
-					//	var timespanEndString = (string)formattedAction[dataKey];
-					//	if (TryParseTimespanFromHS(timespanEndString, out var timespanEnd))
-					//	{
-					//		triggerSettings.BetweenEndOfOccurence = timespanEnd;
-					//	}
-					//}
-
-					//if (dataKey.StartsWith(Constants.CheckIfUseOffsetParameter))
-					//{
-					//	triggerSettings.UseOffset = ParameterExtraction.GetBoolValue(dataKey, formattedAction);
-					//}
-
-					//if (dataKey.StartsWith(Constants.RegexpOrTagDropDown))
-					//{
-					//	triggerSettings.UnitDataSearchMethod = (SearchMethod)ParameterExtraction.GetIntValue(dataKey, formattedAction);
-					//}
-
-					//if (dataKey.StartsWith(Constants.CheckDoNotTriggerOffsetIfOverlappingParameter))
-					//{
-					//	triggerSettings.OverlappingOffset = ParameterExtraction.GetBoolValue(dataKey, formattedAction);
-					//}
-
-					//if (dataKey.Contains(Constants.BeforeAfterOffsetParameter))
-					//{
-					//	var triggerChoiceString = (string)formattedAction[dataKey];
-					//	if (int.TryParse(triggerChoiceString, out var triggerChoice))
-					//	{
-					//		triggerSettings.OffsetBeforeOrAfter = triggerChoice;
-					//	}
-					//}
-
-					//if (dataKey.Contains(Constants.OffsetTimespanParameter))
-					//{
-					//	var offsetTimespanString = (string)formattedAction[dataKey];
-					//	if (TimeSpan.TryParse(offsetTimespanString, out var offsetTimeSpan))
-					//	{
-					//		triggerSettings.OffsetTimespan = offsetTimeSpan;
-					//	}
-					//}
-
-					//if (dataKey.StartsWith(Constants.CheckIfUseHandlingParameter))
-					//{
-					//	triggerSettings.UseRegExpHandling = ParameterExtraction.GetBoolValue(dataKey, formattedAction);
-					//}
-
-					////if (dataKey.Contains(Constants.RegExpHandlingUnitDataListParameter))
-					////{
-					////	settings.RegExpHandlingUnits = (List<RegExpHandlingUnitData>)formattedAction[dataKey];
-					////}
-
-					//if (dataKey.Contains(EventUi.Constants.RegExpHandlingUnitDataListParameter))
-					//{
-					//	triggerSettings.RegExpHandlingUnits = (List<RegExpHandlingUnitData>)formattedAction[dataKey];
-					//}
-
-					//if (dataKey.Contains(Constants.RegExpHandingErrorMessageParameter))
-					//{
-					//	triggerSettings.ErrorMessage = (string)formattedAction[dataKey];
-					//}
-					//if (dataKey.Contains(Constants.IsEditingIdParameter))
-					//{
-					//	triggerSettings.IsEditingId = (int)formattedAction[dataKey];
-					//}
-
-					//if (dataKey.StartsWith(Constants.ControlDeviceParameter))
-					//{
-					//	triggerSettings.CurrentControlUnitEditing = ParameterExtraction.GetIntValue(dataKey, formattedAction);
-					//}
 				}
+
 				_triggerSettings = triggerSettings;
 				return triggerSettings;
 			}
+
 			return null;
 		}
 
-		private AscDescEnum GetAscDescEnumFromObject(object o)
+		private TimeSpan? GetTimeSpanFromObject(object o)
 		{
-			var ascDescEnumAsString = o as string;
+			var timespanAsString = o as string;
 			if (o != null)
 			{
-				AscDescEnum ascDescEnumResult;
-				if (Enum.TryParse(ascDescEnumAsString, true, out ascDescEnumResult))
-					return ascDescEnumResult;
-			}
-
-			return AscDescEnum.Ascending;
-		}
-
-		private int? GetIntOrNullFromObject(object obj)
-		{
-			var intString = obj as string;
-			if (intString != null)
-			{
-				int chosenDeviceId = -1;
-				if (int.TryParse(intString, out chosenDeviceId))
+				if (!string.IsNullOrEmpty(timespanAsString))
 				{
-					return chosenDeviceId;
+					return ConvertTimespanStringToTimespanOrNull();
 				}
 			}
 
 			return null;
 		}
-	}
 
-	internal class DataCurveTriggerSettings
-	{
-		public string FloorChosen { get; set; }
-		public string RoomChosen { get; set; }
-		public AscDescEnum AscendingOrDescending { get; set; }
-		public string Uid { get; set; }
-		public string UniqueControllerId { get; set; }
-		public int? DeviceIdChosen { get; set; }
-		public TimeSpan? TimeSpanChosen { get; set; }
-	}
+		private TimeSpan? ConvertTimespanStringToTimespanOrNull()
+		{
+			return null;
+		}
 
-	internal enum AscDescEnum
-	{
-		Ascending = 1,
-		Descending = 2
+		
+
 	}
 }
