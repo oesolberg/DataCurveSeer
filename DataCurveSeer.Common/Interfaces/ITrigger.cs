@@ -31,7 +31,7 @@ namespace DataCurveSeer.Common.Interfaces
 		string TriggerBuildUi(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo);
 		bool GetHasConditions();
 		int GetSubTriggerCount();
-
+		int? DeviceId { get; }
 		bool ContainsSubTriggerActionNumber(int actionInfoSubTaNumber);
 	}
 }

@@ -26,6 +26,7 @@ namespace DataCurveSeer.MainPlugin
 	    private HsCollectionFactory _collectionFactory;
 	    private IHomeSeerHandler _homeSeerHandler;
 	    private IStorageHandler _storageHandler;
+	   
 
 	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback,HsCollectionFactory collectionFactory)
 	    {
@@ -78,26 +79,19 @@ namespace DataCurveSeer.MainPlugin
 			    if (parameters.Length > 4 && parameters[2] != null && parameters[4] != null)
 			    {
 				    var newValue = (double) parameters[2];
-				    var deviceRef = (int) parameters[4];
-				    Console.WriteLine($"Something happend to a value for deviceId {deviceRef} (value{newValue.ToString()})");
-				    if (DeviceIsWatched(deviceRef))
+				    var deviceId = (int) parameters[4];
+				    Console.WriteLine($"Something happened to a value for deviceId {deviceId} (value{newValue.ToString()})");
+				    if (DeviceIsWatched(deviceId))
 				    {
-						_storageHandler.AddDeviceValueToDatabase(newValue,DateTime.Now,deviceRef);
-					    StoreValueForDevice(deviceRef, newValue);
+						_storageHandler.AddDeviceValueToDatabase(newValue,DateTime.Now,deviceId);
 				    }
 				}
 			}
 	    }
 
-	    private void StoreValueForDevice(int deviceRef, double newValue)
+	    private bool DeviceIsWatched(int deviceId)
 	    {
-			Console.WriteLine("Storing value");
-		    return;
-	    }
-
-	    private bool DeviceIsWatched(int deviceRef)
-	    {
-		    return true;
+		    return _triggerHandler.IsDeviceIdsToWatch(deviceId);
 	    }
 
 	    public bool GetHasTriggers()

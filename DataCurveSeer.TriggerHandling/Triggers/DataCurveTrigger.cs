@@ -25,6 +25,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		public int EvRef { get; set; }
 		public bool IsCondition => _isCondition;
 
+		public int? DeviceId => _triggerSettings.DeviceIdChosen;
+
 		public DataCurveTrigger(IHSApplication hs, ILogging logging, IHsCollectionFactory collectionFactory,
 			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null,
 			IDataCurveTriggerUi dataCurveUi = null)
@@ -259,11 +261,6 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			if (formattedAction != null) //&& formattedAction.Keys.Count > 0)
 			{
 				var uidAndEvRef = $"{triggerInfo.UID.ToString()}_{triggerInfo.evRef.ToString()}_";
-				//if (TriggerShouldBeUpdatedToNewVersion(formattedAction))
-				//{
-				//	formattedAction = UpdateFormattedAction(formattedAction, trigActInfo.UID, trigActInfo.evRef);
-				//}
-
 				formattedAction = _reformatCopiedAction.Run(formattedAction, triggerInfo.UID, triggerInfo.evRef);
 				var triggerSettings = new DataCurveTriggerSettings();
 				foreach (var dataKey in formattedAction.Keys)

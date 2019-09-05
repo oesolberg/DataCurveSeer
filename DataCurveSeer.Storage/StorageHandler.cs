@@ -13,7 +13,7 @@ namespace DataCurveSeer.Storage
 {
 	public interface IStorageHandler
 	{
-		void AddDeviceValueToDatabase(double value,DateTime dateTimeOfMeasurment, int deviceId);
+		void AddDeviceValueToDatabase(double value,DateTime dateTimeOfMeasurement, int deviceId);
 		void RemoveFromDatabase(int deviceId);
 		List<DeviceValue> GetValuesForDevice(int deviceId, DateTime? fromDateTime, DateTime? toDateTime);
 	}
@@ -40,7 +40,7 @@ namespace DataCurveSeer.Storage
 			    Directory.CreateDirectory(dbDirectory);
 		}
 
-		public void AddDeviceValueToDatabase(double value, DateTime dateTimeOfMeasurment, int referenceId)
+		public void AddDeviceValueToDatabase(double value, DateTime dateTimeOfMeasurement, int referenceId)
 		{
 			lock (_lockObject)
 			{
@@ -48,7 +48,7 @@ namespace DataCurveSeer.Storage
 				{
 					var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
 					_logging.LogDebug("LitDbRepo: inserting value into liteDb");
-					deviceValues.Insert(new DeviceValue() {DeviceId = referenceId, Value = value,DateTimeOfMesurment = dateTimeOfMeasurment});
+					deviceValues.Insert(new DeviceValue() {DeviceId = referenceId, Value = value,DateTimeOfMesurment = dateTimeOfMeasurement });
 				}
 			}
 		}

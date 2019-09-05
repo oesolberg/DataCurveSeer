@@ -7,10 +7,7 @@ namespace DataCurveSeer.Common.Interfaces
 	{
 
 		
-		//bool ContainsSubTriggerActionNumber(int subTriggerActionNumber);
 		bool TriggerReferencesDevice(IPlugInAPI.strTrigActInfo actionInfo, int deviceId);
-		//void AddSettingsFromTrigActionInfo(IPlugInAPI.strTrigActInfo trigActInfo);
-		//IPlugInAPI.strTrigActInfo GetTriggerActionInfo();
 
 		void SetCondition(IPlugInAPI.strTrigActInfo actionInfo, bool value);
 		bool GetCondition(IPlugInAPI.strTrigActInfo actionInfo);
@@ -20,7 +17,6 @@ namespace DataCurveSeer.Common.Interfaces
 
 
 		string GetSubTriggerName(int triggerNumber, int subTriggerNumber);
-		//int SubTriggerCount(int triggerNumber);
 
 		bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo);
 		IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData, IPlugInAPI.strTrigActInfo trigActInfo);
@@ -30,5 +26,6 @@ namespace DataCurveSeer.Common.Interfaces
 		int GetSubTriggerCount(int triggerNumber);
 		int GetTriggerCount();
 		bool GetHasTriggers();
+		bool IsDeviceIdsToWatch(int deviceId);
 	}
 }

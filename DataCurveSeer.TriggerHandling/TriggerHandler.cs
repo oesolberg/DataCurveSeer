@@ -23,6 +23,7 @@ namespace DataCurveSeer.TriggerHandling
 		private readonly List<ITrigger> _triggerTypes = new List<ITrigger>();
 		private List<ITrigger> _triggers = new List<ITrigger>();
 		private IHomeSeerHandler _homeSeerHandler;
+		private List<int> _eventDeviceIds = new List<int>();
 
 		protected internal const string TriggerTypeKey = "TriggerType";
 
@@ -36,9 +37,9 @@ namespace DataCurveSeer.TriggerHandling
 			_homeSeerHandler = homeSeerHandler;
 			_triggerTypes = CreateTriggerTypes();
 			GetPluginTriggersFromHomeSeer();
-
-
 		}
+
+		public List<int> EventDeviceIdIds => _eventDeviceIds;
 
 		private List<ITrigger> CreateTriggerTypes()
 		{
@@ -76,6 +77,15 @@ namespace DataCurveSeer.TriggerHandling
 			{
 				triggerToAdd.AddSettingsFromTrigActionInfo(trigActInfo);
 				AddOrUpdatedToRunningTriggers(triggerToAdd);
+				AddDeviceId(triggerToAdd.DeviceId);
+			}
+		}
+
+		private void AddDeviceId(int? deviceId)
+		{
+			if (deviceId.HasValue && !_eventDeviceIds.Exists(x => x == deviceId.Value))
+			{
+				_eventDeviceIds.Add(deviceId.Value);
 			}
 		}
 
@@ -150,6 +160,11 @@ namespace DataCurveSeer.TriggerHandling
 		public bool GetHasTriggers()
 		{
 			return true;
+		}
+
+		public bool IsDeviceIdsToWatch(int deviceId)
+		{
+			return _eventDeviceIds.Exists(x => x == deviceId);
 		}
 
 		public string TriggerBuildUi(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo)
