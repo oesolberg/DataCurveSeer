@@ -97,6 +97,7 @@
     <Compile Include="Interfaces\ITriggerHandling.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\DeviceValue.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

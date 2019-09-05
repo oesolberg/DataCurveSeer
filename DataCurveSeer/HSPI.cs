@@ -223,6 +223,7 @@ namespace HSPI_DataCurveSeer
 
 		public override void HSEvent(Enums.HSEvent eventType, object[] parameters)
 		{
+			_mainPlugin.HsEvent(eventType, parameters);
 		}
 
 	

@@ -39,9 +39,6 @@ namespace DataCurveSeer.Common.Interfaces
 	    string PostBackProc(string page, string data, string user, int userRights);
 
 
-
-
-
-
+	    void HsEvent(Enums.HSEvent eventType, object[] parameters);
     }
 }

@@ -8,6 +8,7 @@ using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
 using DataCurveSeer.Config;
 using DataCurveSeer.HomeSeerHandling;
+using DataCurveSeer.Storage;
 using DataCurveSeer.TriggerHandling;
 using HomeSeerAPI;
 
@@ -24,6 +25,7 @@ namespace DataCurveSeer.MainPlugin
 	    private ITriggerHandler _triggerHandler;
 	    private HsCollectionFactory _collectionFactory;
 	    private IHomeSeerHandler _homeSeerHandler;
+	    private IStorageHandler _storageHandler;
 
 	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback,HsCollectionFactory collectionFactory)
 	    {
@@ -43,8 +45,13 @@ namespace DataCurveSeer.MainPlugin
 		    _config.RegisterConfigs();
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
 			_triggerHandler = new TriggerHandler(_hs,_callback,_iniSettings,_logging, _collectionFactory, _homeSeerHandler);
+			_storageHandler = new StorageHandler(_logging);
 
-		    _logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
+			//_callback.RegisterEventCB(Enums.HSEvent.CONFIG_CHANGE, Utility.PluginName, "");
+			//Register callback on every event of value change. This is the method to find if this is a value of a device we are following 
+			_callback.RegisterEventCB(Enums.HSEvent.VALUE_CHANGE, Utility.PluginName, "");
+
+			_logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
 		    return "";
 	    }
 
@@ -63,7 +70,37 @@ namespace DataCurveSeer.MainPlugin
 		    return _config.PostBackProc(page, data, user, userRights);
 	    }
 
-		public bool GetHasTriggers()
+	    public void HsEvent(Enums.HSEvent eventType, object[] parameters)
+	    {
+			//Catch changes to values and store them for the devices we are watching
+		    if (eventType == Enums.HSEvent.VALUE_CHANGE)
+		    {
+			    if (parameters.Length > 4 && parameters[2] != null && parameters[4] != null)
+			    {
+				    var newValue = (double) parameters[2];
+				    var deviceRef = (int) parameters[4];
+				    Console.WriteLine($"Something happend to a value for deviceId {deviceRef} (value{newValue.ToString()})");
+				    if (DeviceIsWatched(deviceRef))
+				    {
+						_storageHandler.AddDeviceValueToDatabase(newValue,DateTime.Now,deviceRef);
+					    StoreValueForDevice(deviceRef, newValue);
+				    }
+				}
+			}
+	    }
+
+	    private void StoreValueForDevice(int deviceRef, double newValue)
+	    {
+			Console.WriteLine("Storing value");
+		    return;
+	    }
+
+	    private bool DeviceIsWatched(int deviceRef)
+	    {
+		    return true;
+	    }
+
+	    public bool GetHasTriggers()
 		{
 			return _triggerHandler.GetHasTriggers();
 		}

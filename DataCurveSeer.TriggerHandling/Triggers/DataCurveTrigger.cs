@@ -88,7 +88,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		public bool GetTriggerConfigured(IPlugInAPI.strTrigActInfo actionInfo)
 		{
-			return false;
+			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
+			return _triggerSettings.GetTriggerConfigured();
 		}
 
 		public bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo)
@@ -162,9 +163,77 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		//Summary of format info on collapsed trigger/condition
 		public string TriggerFormatUi(IPlugInAPI.strTrigActInfo actionInfo)
 		{
+			var infoInHeader = string.Empty;
 			if (!_isCondition)
 				return "This can never be a trigger, only a condition";
-			return "Trigger configuration going on";
+			if (!ChangeValueTrigger(actionInfo.evRef))
+			{
+				infoInHeader=
+					"The initial trigger needs to be of type 'This device just had its value set or changed' or 'This device has a value that just changed:' to collect data properly<br/>";
+			}
+			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
+			var deviceInfo = GetDeviceInfoString();
+			var ascDescCurve = GetAscendingDescendingCurveInfoString();
+			var timespan = GetTimespanInfoString();
+			return $"{infoInHeader}A data curve of device values for the device {deviceInfo} has had {ascDescCurve} curve for {timespan}";
+		}
+
+		private bool ChangeValueTrigger(int evRef)
+		{
+			return true;
+			//return _homeSeerHandler.IsEventOfChangeValueType(evRef);
+		}
+
+		private string GetAscendingDescendingCurveInfoString()
+		{
+			if (_triggerSettings.AscendingOrDescending == AscDescEnum.Ascending)
+				return "an ascending";
+			return "a descending";
+		}
+
+		private string GetTimespanInfoString()
+		{
+			if (_triggerSettings.TimeSpanChosen.HasValue)
+			{
+				var hoursString=string.Empty;
+				var minutesString = string.Empty;
+				var andString = string.Empty;
+				var timeSpanChosen = _triggerSettings.TimeSpanChosen.Value;
+				if (timeSpanChosen.Hours > 0)
+				{
+
+					hoursString = $"{timeSpanChosen.Hours.ToString()} hour";
+					if (timeSpanChosen.Hours > 1)
+					{
+						hoursString += "s";
+					}
+				}
+
+				if (timeSpanChosen.Hours > 0 && timeSpanChosen.Minutes > 0)
+				{
+					andString = " and ";
+				}
+
+				if (timeSpanChosen.Minutes > 0)
+				{
+					minutesString = $"{timeSpanChosen.Minutes} minute";
+					if (timeSpanChosen.Minutes > 1)
+					{
+						minutesString += "s";
+					}
+				}
+				return $"the last {hoursString}{andString}{minutesString}";
+			}
+
+			return "an unknown time span (this should not happen)";
+			
+		}
+
+		private string GetDeviceInfoString()
+		{
+			if (_triggerSettings.DeviceIdChosen.HasValue)
+				return _homeSeerHandler.GetDeviceInfoString(_triggerSettings.DeviceIdChosen.Value);
+			return "no device set";
 		}
 
 		//Trigger settings
