@@ -91,7 +91,7 @@ namespace DataCurveSeer.MainPlugin
 
 	    private bool DeviceIsWatched(int deviceId)
 	    {
-		    return _triggerHandler.IsDeviceIdsToWatch(deviceId);
+		    return _triggerHandler.IsWatchedDeviceId(deviceId);
 	    }
 
 	    public bool GetHasTriggers()

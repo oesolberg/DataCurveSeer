@@ -1,4 +1,13 @@
 CurveStat
+
+Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dager gamle? Setting for dette med default 2 dager. Starte opprensingstråd ca 1 gang i døgnet
+Litt stats på antall events mottatt og antall events som førte til endringer i databasen?
+Få til noe som henter over alle triggere når vi har gjort en postprocessing på en av våre triggere og finner devicer som vi følger basert på dette
+
+Få til noe som prøver å beregne kurve. Vi må regne ut for alle punkter som er innenfor gitt tidsangivelse. Se om vi er ender på stigende verdi og eventuelt da trigge.
+
+
+
 Man må se på hvordan kurvene har beveget seg siste 120 minutter? Ut fra dette se om man er på en stigende kurve eller om det bare er midlertidig.
 
 Alarm hvis man har stigende kurver for hele perioden siste 120 minutter (positiv økning i temperatur). Denne kan gi en alarm på en gitt tid?

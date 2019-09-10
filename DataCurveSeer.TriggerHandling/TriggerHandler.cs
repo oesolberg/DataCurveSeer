@@ -23,7 +23,7 @@ namespace DataCurveSeer.TriggerHandling
 		private readonly List<ITrigger> _triggerTypes = new List<ITrigger>();
 		private List<ITrigger> _triggers = new List<ITrigger>();
 		private IHomeSeerHandler _homeSeerHandler;
-		private List<int> _eventDeviceIds = new List<int>();
+		private List<int> _watchedEventDeviceIds = new List<int>();
 
 		protected internal const string TriggerTypeKey = "TriggerType";
 
@@ -39,7 +39,7 @@ namespace DataCurveSeer.TriggerHandling
 			GetPluginTriggersFromHomeSeer();
 		}
 
-		public List<int> EventDeviceIdIds => _eventDeviceIds;
+		public List<int> WatchedEventDeviceIdIds => _watchedEventDeviceIds;
 
 		private List<ITrigger> CreateTriggerTypes()
 		{
@@ -83,9 +83,9 @@ namespace DataCurveSeer.TriggerHandling
 
 		private void AddDeviceId(int? deviceId)
 		{
-			if (deviceId.HasValue && !_eventDeviceIds.Exists(x => x == deviceId.Value))
+			if (deviceId.HasValue && !_watchedEventDeviceIds.Exists(x => x == deviceId.Value))
 			{
-				_eventDeviceIds.Add(deviceId.Value);
+				_watchedEventDeviceIds.Add(deviceId.Value);
 			}
 		}
 
@@ -162,9 +162,9 @@ namespace DataCurveSeer.TriggerHandling
 			return true;
 		}
 
-		public bool IsDeviceIdsToWatch(int deviceId)
+		public bool IsWatchedDeviceId(int deviceId)
 		{
-			return _eventDeviceIds.Exists(x => x == deviceId);
+			return _watchedEventDeviceIds.Exists(x => x == deviceId);
 		}
 
 		public string TriggerBuildUi(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo)
@@ -185,7 +185,14 @@ namespace DataCurveSeer.TriggerHandling
 		{
 			var triggerToBuild = FindTrigger(trigActInfo);
 			if (triggerToBuild == null) return new IPlugInAPI.strMultiReturn();
-			return triggerToBuild.TriggerProcessPostUi(postData, trigActInfo);
+			var result= triggerToBuild.TriggerProcessPostUi(postData, trigActInfo);
+			StartTriggerUpdateIn10Seconds();
+			return result;
+		}
+
+		private void StartTriggerUpdateIn10Seconds()
+		{
+			Console.WriteLine("Here be changes that needs addressing, start a thread in 10 seconds to update number of devices to follow");
 		}
 
 		public bool TriggerTrue(IPlugInAPI.strTrigActInfo trigActInfo)
@@ -206,7 +213,19 @@ namespace DataCurveSeer.TriggerHandling
 		{
 			var triggerToBuild = FindTrigger(trigActInfo);
 			if (triggerToBuild == null) return false;
+			UpdateDevicesWatchedList(triggerToBuild);
 			return triggerToBuild.GetTriggerConfigured(trigActInfo);
+		}
+
+		private void UpdateDevicesWatchedList(ITrigger trigger)
+		{
+			if (trigger.DeviceId.HasValue && trigger.DeviceId.Value > 0)
+			{
+				if (!_watchedEventDeviceIds.Contains(trigger.DeviceId.Value))
+				{
+					_watchedEventDeviceIds.Add(trigger.DeviceId.Value);
+				}
+			}
 		}
 
 		public bool GetCondition(IPlugInAPI.strTrigActInfo trigActInfo)

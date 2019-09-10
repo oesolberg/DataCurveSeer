@@ -26,6 +26,6 @@ namespace DataCurveSeer.Common.Interfaces
 		int GetSubTriggerCount(int triggerNumber);
 		int GetTriggerCount();
 		bool GetHasTriggers();
-		bool IsDeviceIdsToWatch(int deviceId);
+		bool IsWatchedDeviceId(int deviceId);
 	}
 }

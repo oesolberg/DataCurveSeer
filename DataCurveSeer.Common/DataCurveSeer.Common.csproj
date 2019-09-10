@@ -84,6 +84,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DelegateDummy.cs" />
     <Compile Include="FloorsRoomsAndDevices.cs" />
     <Compile Include="HsCollectionFactory.cs" />
     <Compile Include="Classes.cs" />

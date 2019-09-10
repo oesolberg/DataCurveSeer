@@ -7,9 +7,8 @@ namespace DataCurveSeer.Common.Interfaces
 	{
 		int TriggerNumber { get; }
 
-		int UID { get; set; }
-
-		int EvRef { get; set; }
+		int UID { get; }
+		int EvRef { get; }
 		bool IsCondition { get; }
 
 		//bool ContainsSubTriggerActionNumber(int subTriggerActionNumber);

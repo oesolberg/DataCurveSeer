@@ -40,8 +40,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			var sb = new StringBuilder();
 			sb.AppendLine("<table>");
 
-			var floorDropDown = CreateFloorDropdown(triggerSettings.FloorChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
-			var roomDropdown = CreateRoomDropdown(triggerSettings.RoomChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
+			var floorDropDown = CreateFloorDropdown(triggerSettings.FloorChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
+			var roomDropdown = CreateRoomDropdown(triggerSettings.RoomChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
 			if (!_floorsRomsAndDevices.RoomExists(triggerSettings.RoomChosen))
 			{
 				triggerSettings.RoomChosen = "";
@@ -50,9 +50,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			{
 				triggerSettings.FloorChosen = "";
 			}
-			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen, triggerSettings.DeviceIdChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
-			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.Uid, triggerSettings.UniqueControllerId);
-			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending, triggerSettings.Uid, triggerSettings.UniqueControllerId);
+			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen, triggerSettings.DeviceIdChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
+			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
+			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending, triggerSettings.UidString, triggerSettings.UniqueControllerId);
 			sb.AppendLine($"<tr><td>A data curve of device values for the device {floorDropDown} {roomDropdown}  {deviceDropdown} has had {ascendingDescendingDropdown} curve for the last {timePicker} minutes</td></tr>");
 			sb.AppendLine("</table>");
 			return sb.ToString();

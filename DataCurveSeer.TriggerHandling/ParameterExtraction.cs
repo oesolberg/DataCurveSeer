@@ -29,10 +29,10 @@ namespace DataCurveSeer.TriggerHandling
 			var intString = obj as string;
 			if (intString != null)
 			{
-				int chosenDeviceId;
-				if (int.TryParse(intString, out chosenDeviceId))
+				int intToReturn;
+				if (int.TryParse(intString, out intToReturn))
 				{
-					return chosenDeviceId;
+					return intToReturn;
 				}
 			}
 			return null;
@@ -93,6 +93,14 @@ namespace DataCurveSeer.TriggerHandling
 			}
 
 			return null;
+		}
+
+		public static int GetIntOrMinusOneFromObject(object obj)
+		{
+			var result = GetIntOrNullFromObject(obj);
+			if (result != null)
+				return result.Value;
+			return -1;
 		}
 	}
 }

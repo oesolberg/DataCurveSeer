@@ -21,11 +21,11 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		public string GetTriggerName() => Utility.PluginName + ": A data curve of device values ...";
 		public int TriggerNumber { get; } = 1;
-		public int UID { get; set; }
-		public int EvRef { get; set; }
+		public int UID=>_triggerSettings?.UID ?? -1;
+		public int EvRef => _triggerSettings?.EvRef ?? -1;
 		public bool IsCondition => _isCondition;
 
-		public int? DeviceId => _triggerSettings.DeviceIdChosen;
+		public int? DeviceId => _triggerSettings?.DeviceIdChosen;
 
 		public DataCurveTrigger(IHSApplication hs, ILogging logging, IHsCollectionFactory collectionFactory,
 			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null,
@@ -88,11 +88,25 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			return _isCondition;
 		}
 
+		
+
 		public bool GetTriggerConfigured(IPlugInAPI.strTrigActInfo actionInfo)
 		{
 			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
+			if (_triggerSettings.DeviceIdChosen.HasValue && _triggerSettings.DeviceIdChosen.Value>-1)
+			{
+				OnDeviceIdSet(_triggerSettings.DeviceIdChosen.Value);
+			}
 			return _triggerSettings.GetTriggerConfigured();
 		}
+
+		private void OnDeviceIdSet(int deviceId)
+		{
+			var deviceIdEventArgs = new DeviceIdEventArgs(){ DeviceId = deviceId};
+			DeviceIdSet?.Invoke(this, deviceIdEventArgs );
+		}
+
+		public event DeviceIdSetEventHandler DeviceIdSet;
 
 		public bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo)
 		{
@@ -118,6 +132,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				this.ToString()); //this.GetType().Name);// typeof(this).Name;//this.ToString());
 
 			postData.Add(Constants.IsConditionKey, _isCondition.ToString());
+			
+			//postData.Add(Constants.Uid, trigActInfo.UID.ToString());
+			//postData.Add(Constants.EvRef, trigActInfo.evRef.ToString());
 
 			foreach (string dataKey in postData)
 			{
@@ -246,7 +263,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 			if (!_isCondition)
 				return "This can never be a trigger, only a condition";
-			_triggerSettings.Uid = triggerInfo.UID.ToString();
+			_triggerSettings.UidString = triggerInfo.UID.ToString();
 
 			_triggerSettings.UniqueControllerId = uniqueControlId;
 			return _dataCurveUi.Build(_triggerSettings);
@@ -261,10 +278,24 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			if (formattedAction != null) //&& formattedAction.Keys.Count > 0)
 			{
 				var uidAndEvRef = $"{triggerInfo.UID.ToString()}_{triggerInfo.evRef.ToString()}_";
+
 				formattedAction = _reformatCopiedAction.Run(formattedAction, triggerInfo.UID, triggerInfo.evRef);
 				var triggerSettings = new DataCurveTriggerSettings();
+				triggerSettings.UID = triggerInfo.UID;
+				triggerSettings.EvRef = triggerInfo.evRef;
 				foreach (var dataKey in formattedAction.Keys)
 				{
+					//if (dataKey.Contains(Constants.EvRef))
+					//{
+					//	triggerSettings.EvRef =
+					//		ParameterExtraction.GetIntOrMinusOneFromObject(formattedAction[dataKey]);
+					//}
+
+					//if (dataKey.Contains(Constants.Uid))
+					//{
+					//	triggerSettings.UID =
+					//		ParameterExtraction.GetIntOrMinusOneFromObject(formattedAction[dataKey]);
+					//}
 
 					if (dataKey.Contains(Constants.DeviceDropdownKey))
 					{
@@ -299,6 +330,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				}
 
 				_triggerSettings = triggerSettings;
+
 				return triggerSettings;
 			}
 

@@ -13,7 +13,7 @@ namespace DataCurveSeer.TriggerHandling
 			switch (triggerType)
 			{
 				//case "GCalSeer.MainPlugin.Triggers.GetSummary": return new GetSummary(log, mainPlugin, callback);
-				case "DataCurve.TriggerHandling.Triggers.DataCurveTrigger":
+				case "DataCurveSeer.TriggerHandling.Triggers.DataCurveTrigger":
 					return new DataCurveTrigger(hs,logging, collectionFactory,homeSeerHandler);
 
 				default:
