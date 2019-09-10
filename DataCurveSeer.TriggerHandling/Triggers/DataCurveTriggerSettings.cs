@@ -1,4 +1,5 @@
 ﻿using System;
+using DataCurveSeer.Common;
 
 namespace DataCurveSeer.TriggerHandling.Triggers
 {

@@ -192,7 +192,7 @@ namespace DataCurveSeer.TriggerHandling
 
 		private void StartTriggerUpdateIn10Seconds()
 		{
-			Console.WriteLine("Here be changes that needs addressing, start a thread in 10 seconds to update number of devices to follow");
+			Console.WriteLine("Here be changes that needs addressing, start a thread in 10 seconds to update number of devices to follow by getting all events?");
 		}
 
 		public bool TriggerTrue(IPlugInAPI.strTrigActInfo trigActInfo)

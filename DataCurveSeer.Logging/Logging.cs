@@ -16,7 +16,7 @@ namespace DataCurveSeer.Logging
 	{
 		private const string OrangeColor = "#FFA500";
 		private const string RedColor = "#FF0000";
-		private static object _lockObject = new object();
+		private static Object _lockObject = new Object();
 		private readonly IIniSettings _iniSettings;
 		private readonly IHSApplication _hs;
 		private bool _disposed;

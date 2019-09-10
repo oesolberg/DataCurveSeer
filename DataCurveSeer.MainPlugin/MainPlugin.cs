@@ -26,7 +26,10 @@ namespace DataCurveSeer.MainPlugin
 	    private HsCollectionFactory _collectionFactory;
 	    private IHomeSeerHandler _homeSeerHandler;
 	    private IStorageHandler _storageHandler;
-	   
+	    private long _numberOfEventsReceived;
+	    private long _numberOfEventsStored;
+	    private long _numberOfValueChanngeEventsReceived;
+
 
 	    public MainPlugin(IHSApplication hs,ILogging logging,IIniSettings iniSettings, IAppCallbackAPI callback,HsCollectionFactory collectionFactory)
 	    {
@@ -74,8 +77,10 @@ namespace DataCurveSeer.MainPlugin
 	    public void HsEvent(Enums.HSEvent eventType, object[] parameters)
 	    {
 			//Catch changes to values and store them for the devices we are watching
+			_numberOfEventsReceived++;
 		    if (eventType == Enums.HSEvent.VALUE_CHANGE)
 		    {
+			    _numberOfValueChanngeEventsReceived++;
 			    if (parameters.Length > 4 && parameters[2] != null && parameters[4] != null)
 			    {
 				    var newValue = (double) parameters[2];
@@ -83,6 +88,7 @@ namespace DataCurveSeer.MainPlugin
 				    Console.WriteLine($"Something happened to a value for deviceId {deviceId} (value{newValue.ToString()})");
 				    if (DeviceIsWatched(deviceId))
 				    {
+					    _numberOfEventsStored++;
 						_storageHandler.AddDeviceValueToDatabase(newValue,DateTime.Now,deviceId);
 				    }
 				}
