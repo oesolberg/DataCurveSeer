@@ -1,10 +1,23 @@
 CurveStat
 
-Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dager gamle? Setting for dette med default 2 dager. Starte opprensingstråd ca 1 gang i døgnet
-Litt stats på antall events mottatt og antall events som førte til endringer i databasen?
-Få til noe som henter over alle triggere når vi har gjort en postprocessing på en av våre triggere og finner devicer som vi følger basert på dette
+//Siste oppgave
+Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dager gamle? Setting for dette med default 2 dager. Starte opprensingstråd ca 1 gang i døgnet fast klokkeslett 30 min før og 30 min etter klokkeslett. Også lagre ned i databasen sist man fikk kjørt en komprimering/sletting. Her må vi kunne låse håndteringen og ha den i egen tråd.
 
-Få til noe som prøver å beregne kurve. Vi må regne ut for alle punkter som er innenfor gitt tidsangivelse. Se om vi er ender på stigende verdi og eventuelt da trigge.
+//Helt siste oppgave
+Litt stats på antall events mottatt og antall events som førte til endringer i databasen? Men dette blir kun noe nice-to-have i mainplugin
+
+//
+Få til noe som henter over alle triggere når vi har gjort en postprocessing på en av våre triggere og finner devicer som vi følger basert på dette. Dette bør spinne ut i egen tråd slik at man ikke påvirker normal kjøring
+
+Få til noe som prøver å beregne kurve når det er triggerTrue. 
+* Hente alle punkter for ønsket tidsperiode
+* Regne ut stiging/fall mellom hvert målepunkt
+* Finne om vi har kun stigende linjer mellom kurvene?
+* Trigge hvis man tilfredstiller kravene i triggeren
+
+Kan ikke kjøre i egen tråd, men må kanskje låses slik at man ikke går i beina på nye oppdateringer? Må sjekke ut hvor lang tid man bruker på å beregne (statistikk på dette?)
+
+Vi må regne ut for alle punkter som er innenfor gitt tidsangivelse. Se om vi er ender på stigende verdi og eventuelt da trigge.
 
 
 
