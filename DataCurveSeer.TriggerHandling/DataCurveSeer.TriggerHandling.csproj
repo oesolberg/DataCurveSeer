@@ -73,6 +73,10 @@
       <Project>{9e86b269-d735-495a-808e-911dab6a38a5}</Project>
       <Name>DataCurveSeer.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataCurveSeer.DataCurveComputation\DataCurveSeer.DataCurveComputation.csproj">
+      <Project>{bcb2334a-2ecc-4897-8a77-231448b1691a}</Project>
+      <Name>DataCurveSeer.DataCurveComputation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

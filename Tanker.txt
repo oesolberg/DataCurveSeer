@@ -6,19 +6,20 @@ Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dage
 //Helt siste oppgave
 Litt stats på antall events mottatt og antall events som førte til endringer i databasen? Men dette blir kun noe nice-to-have i mainplugin
 
-//Fikse før man begynner på trigger
-Få til noe som henter over alle triggere når vi har gjort en postprocessing på en av våre triggere og finner devicer som vi følger basert på dette. Dette bør spinne ut i egen tråd slik at man ikke påvirker normal kjøring
-
 //Etter fiksing av storage
 Få til noe som prøver å beregne kurve når det er triggerTrue. 
 * Hente alle punkter for ønsket tidsperiode
 * Regne ut stiging/fall mellom hvert målepunkt
 * Finne om vi har kun stigende linjer mellom kurvene?
 * Trigge hvis man tilfredstiller kravene i triggeren
+* Kan ikke kjøre i egen tråd, men må kanskje låses slik at man ikke går i beina på nye oppdateringer? Må sjekke ut hvor lang tid man bruker på å beregne (statistikk på dette?)
+* Vi må regne ut for alle punkter som er innenfor gitt tidsangivelse. Se om vi er ender på stigende verdi og eventuelt da trigge.
 
-Kan ikke kjøre i egen tråd, men må kanskje låses slik at man ikke går i beina på nye oppdateringer? Må sjekke ut hvor lang tid man bruker på å beregne (statistikk på dette?)
 
-Vi må regne ut for alle punkter som er innenfor gitt tidsangivelse. Se om vi er ender på stigende verdi og eventuelt da trigge.
+
+//Fikse før man begynner på trigger
+DONE - Få til noe som henter over alle triggere når vi har gjort en postprocessing på en av våre triggere og finner devicer som vi følger basert på dette. Dette bør spinne ut i egen tråd slik at man ikke påvirker normal kjøring
+Inntil videre bare vente i 0.5 sekunder og så kjøre på. Sletter alle deviceIds som vi overvåker og lager listen på nytt.
 
 
 

@@ -24,7 +24,7 @@ namespace DataCurveSeer.Common.Interfaces
 
 		string GetSubTriggerName(int subTriggerNumber);
 
-		bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo);
+		bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo, IStorageHandler storageHandler);
 		IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData, IPlugInAPI.strTrigActInfo trigActInfo);
 		string TriggerFormatUi(IPlugInAPI.strTrigActInfo actionInfo);
 		string TriggerBuildUi(string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo);

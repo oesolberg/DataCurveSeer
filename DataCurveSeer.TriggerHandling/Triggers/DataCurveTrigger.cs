@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
+using DataCurveSeer.DataCurveComputation;
 using HomeSeerAPI;
 
 namespace DataCurveSeer.TriggerHandling.Triggers
@@ -18,6 +19,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		private DataCurveTriggerUi _dataCurveUi;
 		private IHomeSeerHandler _homeSeerHandler;
 		private IHSApplication _hs;
+		private IDataCurveComputationHandler _dataCurveComputationHandler;
 
 		public string GetTriggerName() => Utility.PluginName + ": A data curve of device values ...";
 		public int TriggerNumber { get; } = 1;
@@ -29,7 +31,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		public DataCurveTrigger(IHSApplication hs, ILogging logging, IHsCollectionFactory collectionFactory,
 			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null,
-			IDataCurveTriggerUi dataCurveUi = null)
+			IDataCurveTriggerUi dataCurveUi = null,
+			IDataCurveComputationHandler dataCurveComputationHandler=null)
 		{
 			_collectionFactory = collectionFactory;
 			_logging = logging;
@@ -45,6 +48,10 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				_dataCurveUi = new DataCurveTriggerUi(_homeSeerHandler, _hs);
 			}
 
+			if (dataCurveComputationHandler == null)
+			{
+				_dataCurveComputationHandler = new DataCurveComputationHandler(_logging);
+			}
 		}
 
 		public string GetSubTriggerName(int subTriggerNumber)
@@ -108,8 +115,16 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		public event DeviceIdSetEventHandler DeviceIdSet;
 
-		public bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo)
+		public bool TriggerTrue(IPlugInAPI.strTrigActInfo actionInfo, IStorageHandler storageHandler)
 		{
+			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
+			if (_triggerSettings != null && _triggerSettings.GetTriggerConfigured())
+			{
+				var fromDate = SystemDateTime.Now().AddHours(_triggerSettings.TimeSpanChosen.Value.TotalHours * -1);
+				var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, fromDate,
+					SystemDateTime.Now());
+				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending);
+			}
 			return false;
 		}
 

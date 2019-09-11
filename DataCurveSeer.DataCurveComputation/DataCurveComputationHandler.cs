@@ -4,14 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataCurveSeer.Common;
+using DataCurveSeer.Common.Interfaces;
 using DataCurveSeer.Common.Repository;
 
 namespace DataCurveSeer.DataCurveComputation
 {
-	public interface IDataCurveComputationHandler { }
-
+	
 	public class DataCurveComputationHandler: IDataCurveComputationHandler
 	{
+		public DataCurveComputationHandler(ILogging logging)
+		{
+			
+		}
 		private static Object _lock=new Object();
 		public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc)
 		{

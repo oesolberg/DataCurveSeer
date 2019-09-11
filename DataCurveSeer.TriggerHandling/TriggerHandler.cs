@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
@@ -24,10 +25,12 @@ namespace DataCurveSeer.TriggerHandling
 		private List<ITrigger> _triggers = new List<ITrigger>();
 		private IHomeSeerHandler _homeSeerHandler;
 		private List<int> _watchedEventDeviceIds = new List<int>();
+		private IStorageHandler _storageHandler;
 
 		protected internal const string TriggerTypeKey = "TriggerType";
 
-		public TriggerHandler(IHSApplication hs, IAppCallbackAPI callback, IIniSettings iniSettings, ILogging logging, IHsCollectionFactory collectionFactory,IHomeSeerHandler homeSeerHandler)
+		public TriggerHandler(IHSApplication hs, IAppCallbackAPI callback, IIniSettings iniSettings, 
+			ILogging logging, IHsCollectionFactory collectionFactory,IHomeSeerHandler homeSeerHandler, IStorageHandler storageHandler)
 		{
 			_hs = hs;
 			_callback = callback;
@@ -35,6 +38,7 @@ namespace DataCurveSeer.TriggerHandling
 			_logging = logging;
 			_collectionFactory = collectionFactory;
 			_homeSeerHandler = homeSeerHandler;
+			_storageHandler = storageHandler;
 			_triggerTypes = CreateTriggerTypes();
 			GetPluginTriggersFromHomeSeer();
 		}
@@ -186,20 +190,46 @@ namespace DataCurveSeer.TriggerHandling
 			var triggerToBuild = FindTrigger(trigActInfo);
 			if (triggerToBuild == null) return new IPlugInAPI.strMultiReturn();
 			var result= triggerToBuild.TriggerProcessPostUi(postData, trigActInfo);
-			StartTriggerUpdateIn10Seconds();
+			StartTriggerUpdateIn500MilliSeconds();
 			return result;
 		}
 
-		private void StartTriggerUpdateIn10Seconds()
+		private void StartTriggerUpdateIn500MilliSeconds()
 		{
 			Console.WriteLine("Here be changes that needs addressing, start a thread in 10 seconds to update number of devices to follow by getting all events?");
+			//Spawn a thread for waiting 250 ms, then update the triggerlist
+			var t = new Thread(WaitAndRefetchTriggers);
+			t.Start();
 		}
+
+		private void WaitAndRefetchTriggers()
+		{
+			//Wait 0.5 seconds to do updates. Hope it is enough time for HomeSeer to get everything done.
+			Thread.Sleep(500);
+			ReFetchTriggers();
+		}
+
+
+		private void ReFetchTriggers()
+		{
+			var triggersInPlugin = _callback.GetTriggers(Utility.PluginName);
+			//Remove all watched event device Ids
+			if (_watchedEventDeviceIds.Count > 0)
+			{
+				_watchedEventDeviceIds.Clear();
+			}
+			if (triggersInPlugin != null & triggersInPlugin.Length > 0)
+			{
+				CreateExistingTriggers(triggersInPlugin);
+			}
+		}
+
 
 		public bool TriggerTrue(IPlugInAPI.strTrigActInfo trigActInfo)
 		{
 			var triggerToBuild = FindTrigger(trigActInfo);
 			if (triggerToBuild == null) return false;
-			return triggerToBuild.TriggerTrue(trigActInfo);
+			return triggerToBuild.TriggerTrue(trigActInfo, _storageHandler);
 		}
 
 		string ITriggerHandler.GetTriggerName(int triggerNumber)
@@ -213,20 +243,20 @@ namespace DataCurveSeer.TriggerHandling
 		{
 			var triggerToBuild = FindTrigger(trigActInfo);
 			if (triggerToBuild == null) return false;
-			UpdateDevicesWatchedList(triggerToBuild);
+			//UpdateDevicesWatchedList(triggerToBuild);
 			return triggerToBuild.GetTriggerConfigured(trigActInfo);
 		}
 
-		private void UpdateDevicesWatchedList(ITrigger trigger)
-		{
-			if (trigger.DeviceId.HasValue && trigger.DeviceId.Value > 0)
-			{
-				if (!_watchedEventDeviceIds.Contains(trigger.DeviceId.Value))
-				{
-					_watchedEventDeviceIds.Add(trigger.DeviceId.Value);
-				}
-			}
-		}
+		//private void UpdateDevicesWatchedList(ITrigger trigger)
+		//{
+		//	if (trigger.DeviceId.HasValue && trigger.DeviceId.Value > 0)
+		//	{
+		//		if (!_watchedEventDeviceIds.Contains(trigger.DeviceId.Value))
+		//		{
+		//			_watchedEventDeviceIds.Add(trigger.DeviceId.Value);
+		//		}
+		//	}
+		//}
 
 		public bool GetCondition(IPlugInAPI.strTrigActInfo trigActInfo)
 		{

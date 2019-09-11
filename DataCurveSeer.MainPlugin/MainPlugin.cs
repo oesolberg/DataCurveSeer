@@ -48,8 +48,8 @@ namespace DataCurveSeer.MainPlugin
 			_config = new MainConfig(_logging, _hs,  _iniSettings, _callback, this);
 		    _config.RegisterConfigs();
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
-			_triggerHandler = new TriggerHandler(_hs,_callback,_iniSettings,_logging, _collectionFactory, _homeSeerHandler);
 			_storageHandler = new StorageHandler(_logging);
+			_triggerHandler = new TriggerHandler(_hs, _callback, _iniSettings, _logging, _collectionFactory, _homeSeerHandler,_storageHandler);
 
 			//_callback.RegisterEventCB(Enums.HSEvent.CONFIG_CHANGE, Utility.PluginName, "");
 			//Register callback on every event of value change. This is the method to find if this is a value of a device we are following 

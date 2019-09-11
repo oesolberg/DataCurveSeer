@@ -85,6 +85,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AscDescEnum.cs" />
+    <Compile Include="SystemDateTime.cs" />
     <Compile Include="DelegateDummy.cs" />
     <Compile Include="FloorsRoomsAndDevices.cs" />
     <Compile Include="HsCollectionFactory.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="Interfaces\IMainPlugin.cs" />
     <Compile Include="IniSettings.cs" />
     <Compile Include="Interfaces\IIniSettings.cs" />
+    <Compile Include="Interfaces\IDataCurveComputationHandler.cs" />
+    <Compile Include="Interfaces\IStorageHandler.cs" />
     <Compile Include="Interfaces\ITrigger.cs" />
     <Compile Include="Interfaces\ITriggerHandling.cs" />
     <Compile Include="LogLevel.cs" />
