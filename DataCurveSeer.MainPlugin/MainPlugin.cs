@@ -81,7 +81,7 @@ namespace DataCurveSeer.MainPlugin
 			_numberOfEventsReceived++;
 		    if (eventType == Enums.HSEvent.VALUE_CHANGE)
 		    {
-				_logging.LogDebug("Got an value changed event. Trying to check if we should log it");
+				_logging.LogDebug("Got an value changed event. Trying to check if we should store it");
 			    _numberOfValueChanngeEventsReceived++;
 			    if (parameters!=null && parameters.Length > 4 && parameters[2] != null && parameters[4] != null &&
 			        parameters[2] is double && parameters[4] is int)
@@ -92,7 +92,7 @@ namespace DataCurveSeer.MainPlugin
 				    if (DeviceIsWatched(deviceId))
 				    {
 
-					    _logging.LogDebug("logging the event");
+					    _logging.LogDebug($"logging an event with data deviceId:{deviceId} value: {newValue}");
 						_numberOfEventsStored++;
 						_storageHandler.AddDeviceValueToDatabase(newValue,DateTime.Now,deviceId);
 				    }

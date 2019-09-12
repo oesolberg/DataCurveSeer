@@ -13,11 +13,14 @@ namespace DataCurveSeer.DataCurveComputation
 	
 	public class DataCurveComputationHandler: IDataCurveComputationHandler
 	{
+		
+		private static Object _lock=new Object();
+		private ILogging _logging;
+
 		public DataCurveComputationHandler(ILogging logging)
 		{
-			
+			_logging = logging;
 		}
-		private static Object _lock=new Object();
 		public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc)
 		{
 			if (dataPoints != null && dataPoints.Count > 1)
@@ -25,13 +28,14 @@ namespace DataCurveSeer.DataCurveComputation
 				//Do computations to find if we have ascending or descending curve. Start by locking the methode to avoid multiple results
 				lock (_lock)
 				{
+					_logging.LogDebug($"computing the curve for device:{dataPoints.First().DeviceId}");
 					var resultSet = ComputeLinearData(dataPoints);
+					_logging.LogDebug($"result of computing IsDescending: {resultSet.IsDescending.ToString()} IsAscending:{resultSet.IsAscending.ToString()} Slope:{resultSet.Slope.ToString("#.###")}");
 					if (ascDesc == AscDescEnum.Ascending && resultSet.IsAscending)
 						return true;
 					if (ascDesc == AscDescEnum.Descending && resultSet.IsDescending)
 						return true;
 				}
-
 			}
 			return false;
 		}
@@ -43,14 +47,16 @@ namespace DataCurveSeer.DataCurveComputation
 			double[] ydata = CreateYDataFromDoubleValues(dataPoints);
 
 			Tuple<double, double> p = Fit.Line(xdata, ydata);
-			double a = p.Item1; // == 10; intercept -- No clue what this is
-			double b = p.Item2; // == 0.5; slope
-			if (b > 0)
+			double intercept = p.Item1; // == 10; intercept -- No clue what this is
+			double slope = p.Item2; // == 0.5; slope
+			resultSet.Slope = slope;
+			resultSet.Intercept = intercept;
+			if (slope > 0)
 			{
 				resultSet.IsAscending = true;
 			}
 
-			if (b < 0)
+			if (slope < 0)
 			{
 				resultSet.IsDescending = true;
 			}
@@ -92,5 +98,7 @@ namespace DataCurveSeer.DataCurveComputation
 	{
 		public bool IsDescending { get; set; }
 		public bool IsAscending { get; set; }
+		public double Intercept { get; set; }
+		public double Slope { get; set; }
 	}
 }
