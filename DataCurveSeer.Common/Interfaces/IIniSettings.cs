@@ -8,6 +8,9 @@ namespace DataCurveSeer.Common.Interfaces
 
 		void SaveSettingsToIniFile();
 
+
+		event IniSettingsChangedEventHandler IniSettingsChanged;
+
 		LogLevel LogLevel { get; set; }
 	}
 }

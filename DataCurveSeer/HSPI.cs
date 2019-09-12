@@ -270,7 +270,7 @@ namespace HSPI_DataCurveSeer
 
 		public override string PostBackProc(string page, string data, string user, int userRights)
 		{
-			return "";
+			return _mainPlugin.PostBackProc(page, data, user, userRights);
 		}
 
 		public override string ConfigDevice(int deviceId, string user, int userRights, bool newDevice)
@@ -306,7 +306,7 @@ namespace HSPI_DataCurveSeer
 
 		protected override bool GetHscomPort()
 		{
-			return true;
+			return false;
 		}
 
 		public override void SetDeviceValue(int deviceId, double value, bool trigger = true)

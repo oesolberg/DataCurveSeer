@@ -82,7 +82,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		public IPlugInAPI.strTrigActInfo GetTriggerActionInfo()
 		{
-			throw new System.NotImplementedException();
+			return _triggerInfo; //_trigActInfo = trigActInfo;
 		}
 
 		public void SetCondition(IPlugInAPI.strTrigActInfo actionInfo, bool value)

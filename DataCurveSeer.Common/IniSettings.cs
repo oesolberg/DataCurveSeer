@@ -96,7 +96,7 @@ namespace DataCurveSeer.Common
 			{
 				_logLevel = value;
 				SaveLoglevel();
-				//OnIniSettingsChanged();
+				OnIniSettingsChanged();
 			}
 		}
 
@@ -109,6 +109,13 @@ namespace DataCurveSeer.Common
 			//OnIniSettingsChanged();
 		}
 
+		public event IniSettingsChangedEventHandler IniSettingsChanged;
+
+
+		protected virtual void OnIniSettingsChanged()
+		{
+			IniSettingsChanged?.Invoke(this, EventArgs.Empty);
+		}
 
 		public void Dispose()
 		{

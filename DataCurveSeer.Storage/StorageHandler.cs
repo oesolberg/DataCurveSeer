@@ -43,7 +43,7 @@ namespace DataCurveSeer.Storage
 				{
 					var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
 					_logging.LogDebug("LitDbRepo: inserting value into liteDb");
-					deviceValues.Insert(new DeviceValue() {DeviceId = referenceId, Value = value,DateTimeOfMesurment = dateTimeOfMeasurement });
+					deviceValues.Insert(new DeviceValue() {DeviceId = referenceId, Value = value,DateTimeOfMeasurment = dateTimeOfMeasurement });
 				}
 			}
 		}
@@ -82,8 +82,8 @@ namespace DataCurveSeer.Storage
 
 					var foundValues = db.Query<DeviceValue>()
 						.Where(x => x.DeviceId == deviceId && 
-								x.DateTimeOfMesurment >= startDateTime &&
-								x.DateTimeOfMesurment <= endDateTime)
+								x.DateTimeOfMeasurment >= startDateTime &&
+								x.DateTimeOfMeasurment <= endDateTime)
 						.ToList();
 					return foundValues;
 				}

@@ -47,6 +47,7 @@ namespace DataCurveSeer.MainPlugin
 			_logging.Log(initLogString);
 			_config = new MainConfig(_logging, _hs,  _iniSettings, _callback, this);
 		    _config.RegisterConfigs();
+		    _iniSettings.IniSettingsChanged += _logging.IniSettingHasChanged;
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
 			_storageHandler = new StorageHandler(_logging);
 			_triggerHandler = new TriggerHandler(_hs, _callback, _iniSettings, _logging, _collectionFactory, _homeSeerHandler,_storageHandler);
@@ -80,15 +81,19 @@ namespace DataCurveSeer.MainPlugin
 			_numberOfEventsReceived++;
 		    if (eventType == Enums.HSEvent.VALUE_CHANGE)
 		    {
+				_logging.LogDebug("Got an value changed event. Trying to check if we should log it");
 			    _numberOfValueChanngeEventsReceived++;
-			    if (parameters.Length > 4 && parameters[2] != null && parameters[4] != null)
+			    if (parameters!=null && parameters.Length > 4 && parameters[2] != null && parameters[4] != null &&
+			        parameters[2] is double && parameters[4] is int)
 			    {
 				    var newValue = (double) parameters[2];
 				    var deviceId = (int) parameters[4];
-				    Console.WriteLine($"Something happened to a value for deviceId {deviceId} (value{newValue.ToString()})");
+				    Console.WriteLine($"Something happened to a value for deviceId {deviceId} (value: {newValue.ToString()})");
 				    if (DeviceIsWatched(deviceId))
 				    {
-					    _numberOfEventsStored++;
+
+					    _logging.LogDebug("logging the event");
+						_numberOfEventsStored++;
 						_storageHandler.AddDeviceValueToDatabase(newValue,DateTime.Now,deviceId);
 				    }
 				}

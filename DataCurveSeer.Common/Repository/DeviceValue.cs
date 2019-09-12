@@ -7,6 +7,6 @@ namespace DataCurveSeer.Common.Repository
 		public int Id { get; set; }
 		public int DeviceId { get; set; }
 		public double Value { get; set; }
-		public DateTime DateTimeOfMesurment { get; set; }
+		public DateTime DateTimeOfMeasurment { get; set; }
 	}
 }

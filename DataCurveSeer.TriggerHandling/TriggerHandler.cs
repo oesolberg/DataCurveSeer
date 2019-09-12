@@ -168,6 +168,7 @@ namespace DataCurveSeer.TriggerHandling
 
 		public bool IsWatchedDeviceId(int deviceId)
 		{
+			if (_watchedEventDeviceIds == null || _watchedEventDeviceIds.Count == 0) return false;
 			return _watchedEventDeviceIds.Exists(x => x == deviceId);
 		}
 
