@@ -103,7 +103,9 @@ namespace DataCurveSeer.Logging
 																									   //Write to Homseseer log
 
 			if ((logLevel == LogLevel.IgnoreSettings) || //Log that will be written no matter what ini setting
-				(logLevel == LogLevel.Normal && _iniSettings.LogLevel == LogLevel.Normal) || //Log that will be written when ini setting is set to normal
+				(logLevel == LogLevel.Normal && 
+						(_iniSettings.LogLevel == LogLevel.Normal || _iniSettings.LogLevel== LogLevel.Debug || _iniSettings.LogLevel == LogLevel.DebugToFileAndLog)) 
+				|| //Log that will be written when ini setting is set to normal
 				(logLevel == LogLevel.Debug && (_iniSettings.LogLevel == LogLevel.Debug || _iniSettings.LogLevel == LogLevel.DebugToFileAndLog)))
 			{
 				_hs.WriteLog(Utility.PluginName, message);

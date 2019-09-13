@@ -48,6 +48,8 @@ namespace DataCurveSeer.MainPlugin
 			_config = new MainConfig(_logging, _hs,  _iniSettings, _callback, this);
 		    _config.RegisterConfigs();
 
+		    _callback.RegisterEventCB(Enums.HSEvent.VALUE_CHANGE, Utility.PluginName, "");
+
 		    _logging.Log($"Done creating configs");
 			_iniSettings.IniSettingsChanged += _logging.IniSettingHasChanged;
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
@@ -61,7 +63,7 @@ namespace DataCurveSeer.MainPlugin
 
 			//_callback.RegisterEventCB(Enums.HSEvent.CONFIG_CHANGE, Utility.PluginName, "");
 			//Register callback on every event of value change. This is the method to find if this is a value of a device we are following 
-			_callback.RegisterEventCB(Enums.HSEvent.VALUE_CHANGE, Utility.PluginName, "");
+			
 			_logging.Log($"Done registering callback");
 			_logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
 		    return "";
