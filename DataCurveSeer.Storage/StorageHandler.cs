@@ -37,28 +37,30 @@ namespace DataCurveSeer.Storage
 
 		public void AddDeviceValueToDatabase(double value, DateTime dateTimeOfMeasurement, int referenceId)
 		{
-			lock (_lockObject)
-			{
+			//lock (_lockObject)
+			//{
 				using (var db = new LiteDatabase(_repoFilename))
 				{
 					var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
 					_logging.LogDebug("LitDbRepo: inserting value into liteDb");
 					deviceValues.Insert(new DeviceValue() {DeviceId = referenceId, Value = value,DateTimeOfMeasurment = dateTimeOfMeasurement });
-				}
+					deviceValues.EnsureIndex(x => x.DateTimeOfMeasurment);
+					deviceValues.EnsureIndex(x => x.DeviceId);
 			}
+			//}
 		}
 
 		public void RemoveFromDatabase(int deviceId)
 		{
-			lock (_lockObject)
-			{
+			//lock (_lockObject)
+			//{
 				using (var db = new LiteDatabase(_repoFilename))
 				{
 					var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
 					_logging.LogDebug($"LitDbRepo: deleting values for deviceId {deviceId}");
 					deviceValues.Delete(x => x.DeviceId == deviceId);
 				}
-			}
+			//}
 		}
 
 		public List<DeviceValue> GetValuesForDevice(int deviceId, DateTime? fromDateTime, DateTime? toDateTime)
@@ -74,20 +76,21 @@ namespace DataCurveSeer.Storage
 				endDateTime = toDateTime.Value;
 			}
 
-			lock (_lockObject)
-			{
+			//lock (_lockObject)
+			//{
 				using (var db = new LiteRepository(_repoFilename))
 				{
 					_logging.LogDebug($"LitDbRepo: selecting values for deviceId {deviceId} with starDateTime {startDateTime.ToString()} and endDateTime {endDateTime.ToString()}");
 
-					var foundValues = db.Query<DeviceValue>()
+					var foundValues = db.Query<DeviceValue>(DeviceValuesTable)
 						.Where(x => x.DeviceId == deviceId && 
 								x.DateTimeOfMeasurment >= startDateTime &&
 								x.DateTimeOfMeasurment <= endDateTime)
+						
 						.ToList();
 					return foundValues;
 				}
-			}
+			//}
 
 			//return new List<DeviceValue>();
 		}

@@ -1,3 +1,5 @@
+using System;
+using DataCurveSeer.Common;
 using Hspi;
 
 namespace HSPI_DataCurveSeer
@@ -6,6 +8,7 @@ namespace HSPI_DataCurveSeer
 	{
 		private static void Main(string[] args)
 		{
+			Console.WriteLine(Utility.PluginName);
 			Connector.Connect<HSPI>(args);
 		}
 	}

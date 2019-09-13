@@ -47,15 +47,22 @@ namespace DataCurveSeer.MainPlugin
 			_logging.Log(initLogString);
 			_config = new MainConfig(_logging, _hs,  _iniSettings, _callback, this);
 		    _config.RegisterConfigs();
-		    _iniSettings.IniSettingsChanged += _logging.IniSettingHasChanged;
+
+		    _logging.Log($"Done creating configs");
+			_iniSettings.IniSettingsChanged += _logging.IniSettingHasChanged;
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
+			_logging.Log($"Done creating HomeSeerHandler");
+
 			_storageHandler = new StorageHandler(_logging);
+			_logging.Log($"Done creating StorageHandler");
+
 			_triggerHandler = new TriggerHandler(_hs, _callback, _iniSettings, _logging, _collectionFactory, _homeSeerHandler,_storageHandler);
+			_logging.Log($"Done creating _triggerHandler ");
 
 			//_callback.RegisterEventCB(Enums.HSEvent.CONFIG_CHANGE, Utility.PluginName, "");
 			//Register callback on every event of value change. This is the method to find if this is a value of a device we are following 
 			_callback.RegisterEventCB(Enums.HSEvent.VALUE_CHANGE, Utility.PluginName, "");
-
+			_logging.Log($"Done registering callback");
 			_logging.Log($"{Utility.PluginName} MainPlugin InitIo Complete");
 		    return "";
 	    }
@@ -81,14 +88,14 @@ namespace DataCurveSeer.MainPlugin
 			_numberOfEventsReceived++;
 		    if (eventType == Enums.HSEvent.VALUE_CHANGE)
 		    {
-				_logging.LogDebug("Got an value changed event. Trying to check if we should store it");
+				//_logging.LogDebug("Got an value changed event. Trying to check if we should store it");
 			    _numberOfValueChanngeEventsReceived++;
 			    if (parameters!=null && parameters.Length > 4 && parameters[2] != null && parameters[4] != null &&
 			        parameters[2] is double && parameters[4] is int)
 			    {
 				    var newValue = (double) parameters[2];
 				    var deviceId = (int) parameters[4];
-				    Console.WriteLine($"Something happened to a value for deviceId {deviceId} (value: {newValue.ToString()})");
+				    //Console.WriteLine($"Something happened to a value for deviceId {deviceId} (value: {newValue.ToString()})");
 				    if (DeviceIsWatched(deviceId))
 				    {
 

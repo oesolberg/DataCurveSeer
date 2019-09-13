@@ -25,6 +25,8 @@ namespace DataCurveSeer.DataCurveComputation
 		{
 			if (dataPoints != null && dataPoints.Count > 1)
 			{
+				_logging.LogDebug($"Wait for lock in DataCurveComputation for device:{dataPoints.First().DeviceId}");
+
 				//Do computations to find if we have ascending or descending curve. Start by locking the methode to avoid multiple results
 				lock (_lock)
 				{
@@ -71,6 +73,7 @@ namespace DataCurveSeer.DataCurveComputation
 			foreach (var deviceValue in dataPoints)
 			{
 				xData[i] = CreateDoubleValueFromDateTime(deviceValue.DateTimeOfMeasurment);
+				i++;
 			}
 			return xData;
 		}
@@ -89,6 +92,7 @@ namespace DataCurveSeer.DataCurveComputation
 			foreach (var deviceValue in dataPoints)
 			{
 				yData[i] = deviceValue.Value;
+				i++;
 			}
 			return yData;
 		}
