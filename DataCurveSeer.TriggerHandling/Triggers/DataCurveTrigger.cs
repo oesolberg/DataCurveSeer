@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
 using DataCurveSeer.DataCurveComputation;
@@ -124,6 +125,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, fromDate,
 					SystemDateTime.Now());
 				_logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler==null}");
+				if(_triggerSettings.UseFutureComputation && _triggerSettings.GetTriggerConfigured())
+					return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending,_triggerSettings.FutureThresholdValue,_triggerSettings.FutureComputationTimeSpan);
+
 				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending);
 			}
 			return false;
@@ -209,8 +213,15 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
 			var deviceInfo = GetDeviceInfoString();
 			var ascDescCurve = GetAscendingDescendingCurveInfoString();
-			var timespan = GetTimespanInfoString();
-			return $"{infoInHeader}A data curve of device values for the device {deviceInfo} has had {ascDescCurve} curve for {timespan}";
+			var timespan = GetTimespanInfoString(_triggerSettings.TimeSpanChosen, "the last");
+			var futureSettings = string.Empty;
+			if (_triggerSettings.UseFutureComputation && _triggerSettings.FutureThresholdValue.HasValue &&
+			    _triggerSettings.FutureComputationTimeSpan.HasValue)
+			{
+				var futureTimeSpan = GetTimespanInfoString(_triggerSettings.FutureComputationTimeSpan);
+				futureSettings = $"and the computed value reaches {_triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"))} within {futureTimeSpan}";
+			}
+			return $"{infoInHeader}A data curve of device values for the device {deviceInfo} has had {ascDescCurve} curve for {timespan} {futureSettings}";
 		}
 
 		private bool ChangeValueTrigger(int evRef)
@@ -226,14 +237,14 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			return "a descending";
 		}
 
-		private string GetTimespanInfoString()
+		private string GetTimespanInfoString(TimeSpan? timeSpanToConvert,string prefix="")
 		{
-			if (_triggerSettings.TimeSpanChosen.HasValue)
+			if (timeSpanToConvert.HasValue)
 			{
 				var hoursString=string.Empty;
 				var minutesString = string.Empty;
 				var andString = string.Empty;
-				var timeSpanChosen = _triggerSettings.TimeSpanChosen.Value;
+				var timeSpanChosen = timeSpanToConvert.Value;
 				if (timeSpanChosen.Hours > 0)
 				{
 
@@ -257,7 +268,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 						minutesString += "s";
 					}
 				}
-				return $"the last {hoursString}{andString}{minutesString}";
+				return $"{prefix} {hoursString}{andString}{minutesString}";
 			}
 
 			return "an unknown time span (this should not happen)";
@@ -342,6 +353,18 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 					if (dataKey.Contains(Constants.AscDescKey))
 					{
 						triggerSettings.AscendingOrDescending = ParameterExtraction.GetAscDescEnumFromObject(formattedAction[dataKey]);
+					}
+					if (dataKey.Contains(Constants.CheckIfUseFutureComputationKey))
+					{
+						triggerSettings.UseFutureComputation= ParameterExtraction.GetBoolFromObject(formattedAction[dataKey]);
+					}
+					if (dataKey.Contains(Constants.FutureTimeSpanKey))
+					{
+						triggerSettings.FutureComputationTimeSpan = ParameterExtraction.GetTimeSpanFromObject(formattedAction[dataKey]);
+					}
+					if (dataKey.Contains(Constants.FutureThresholdValueKey))
+					{
+						triggerSettings.FutureThresholdValue = ParameterExtraction.GetDoubleOrNull(formattedAction[dataKey]);
 					}
 				}
 

@@ -64,12 +64,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DataCurveSeer.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataCurveSeer.Common\DataCurveSeer.Common.csproj">
       <Project>{9e86b269-d735-495a-808e-911dab6a38a5}</Project>
       <Name>DataCurveSeer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataCurveSeer.DataCurveComputation\DataCurveSeer.DataCurveComputation.csproj">
+      <Project>{bcb2334a-2ecc-4897-8a77-231448b1691a}</Project>
+      <Name>DataCurveSeer.DataCurveComputation</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataCurveSeer.Storage\DataCurveSeer.Storage.csproj">
       <Project>{261c7a4b-3fe6-4d30-8d9e-df187701312f}</Project>

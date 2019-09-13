@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using DataCurveSeer.Common;
 
 namespace DataCurveSeer.TriggerHandling
@@ -8,9 +9,11 @@ namespace DataCurveSeer.TriggerHandling
 		public static bool? GetBoolOrNullFromObject(object o)
 		{
 			var boolAsString = o as string;
-			if (!string.IsNullOrEmpty(boolAsString) && (boolAsString.ToLower() == "true" || boolAsString.ToLower() == "false"))
+			if (!string.IsNullOrEmpty(boolAsString) &&
+				(boolAsString.ToLower() == "true" || boolAsString.ToLower() == "false" ||
+					boolAsString.ToLower() == "on" || boolAsString.ToLower() == "checked"))
 			{
-				if (boolAsString.ToLower() == "true")
+				if (boolAsString.ToLower() == "true" || boolAsString.ToLower() == "on" || boolAsString.ToLower() == "checked")
 					return true;
 				return false;
 			}
@@ -88,7 +91,7 @@ namespace DataCurveSeer.TriggerHandling
 						{
 							return null;
 						}
-						return new TimeSpan(days,hours,minutes,seconds);
+						return new TimeSpan(days, hours, minutes, seconds);
 					}
 				}
 			}
@@ -102,6 +105,22 @@ namespace DataCurveSeer.TriggerHandling
 			if (result != null)
 				return result.Value;
 			return -1;
+		}
+
+		public static double? GetDoubleOrNull(object obj)
+		{
+			var doubleString = obj as string;
+			if (doubleString != null)
+			{
+				double doubleToReturn;
+				CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+				NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
+				if (double.TryParse(doubleString, style, culture, out doubleToReturn))
+				{
+					return doubleToReturn;
+				}
+			}
+			return null;
 		}
 	}
 }

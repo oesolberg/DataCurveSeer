@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataCurveSeer.Common.Interfaces;
+using DataCurveSeer.DataCurveComputation;
 using NUnit.Framework;
 using DataCurveSeer.Storage;
 using Should;
@@ -50,5 +52,27 @@ namespace IntegrationTests
 		{
 		    sut.RemoveFromDatabase(deviceId);
 	    }
-    }
+
+	    [Test]
+	    public void GetValuesForDevice_ShouldComputeSomething()
+	    {
+		    var deviceId = 530;
+		    var path = System.IO.Path.GetDirectoryName(
+			    System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+		    if (path.StartsWith("file:\\"))
+		    {
+			    path = path.Substring(6);
+		    }
+			var dbPath= Path.Combine(path, "DataCurveSeer.db");
+			var storageHandler = new StorageHandler(_logging,dbPath);
+
+			var result = storageHandler.GetValuesForDevice(deviceId, new DateTime(2019, 9, 12), new DateTime(2019, 9, 12, 1, 0, 0));
+			var sut = new DataCurveComputationHandler(_logging);
+			var finalResult = sut.TriggerTrue(result, ascDesc: DataCurveSeer.Common.AscDescEnum.Ascending,thresholdValue: 10.5d,timeToReachThreshold: new TimeSpan(0,3,0,0));
+			finalResult.ShouldBeFalse();
+
+	    }
+
+	}
 }
+

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Text;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
@@ -18,7 +19,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 	internal sealed class DataCurveTriggerUi : IDataCurveTriggerUi
 	{
 
-		private const string EventsPage = "events";
+
 		private IHomeSeerHandler _homeSeerHandler;
 		private FloorsRoomsAndDevices _floorsRomsAndDevices;
 		private IHSApplication _hs;
@@ -51,12 +52,64 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				triggerSettings.FloorChosen = "";
 			}
 			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen, triggerSettings.DeviceIdChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
-			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
+			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.TimeSpanKey);
 			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending, triggerSettings.UidString, triggerSettings.UniqueControllerId);
-			sb.AppendLine($"<tr><td>A data curve of device values for the device {floorDropDown} {roomDropdown}  {deviceDropdown} has had {ascendingDescendingDropdown} curve for the last {timePicker} minutes</td></tr>");
+			sb.AppendLine($"<tr><td>A data curve of device values for the device {floorDropDown} {roomDropdown}  {deviceDropdown} has had {ascendingDescendingDropdown} curve for the last {timePicker}</td></tr>");
+			//Future computation ui
+			sb.AppendLine(CreateChoicesForFutureComputation(triggerSettings));
 			sb.AppendLine("</table>");
 			return sb.ToString();
 		}
+
+		private string CreateChoicesForFutureComputation(DataCurveTriggerSettings triggerSettings)
+		{
+			var sb = new StringBuilder();
+			var checkDoFutureComputation = new clsJQuery.jqCheckBox(Constants.CheckIfUseFutureComputationKey + triggerSettings.UID + triggerSettings.UniqueControllerId, "", Constants.EventsPage, true, true);
+			checkDoFutureComputation.@checked = triggerSettings.UseFutureComputation;
+			checkDoFutureComputation.toolTip =
+				"Try to estimate the future value";
+
+			if (!triggerSettings.UseFutureComputation)
+			{
+				var fontType = "class='not_mapped_style' style='font-style: italic'";
+				sb.AppendLine("<tr><th class='not_mapped_style' style='text-align:left'>Future computation:</th></tr>");
+
+				sb.AppendLine($"<tr><td {fontType} colspan='7'>{checkDoFutureComputation.Build()} No future computation </td></tr>");
+			}
+			else
+			{
+				sb.AppendLine(CreateUiForFutureComputation(checkDoFutureComputation,triggerSettings));
+			}
+
+			return sb.ToString();
+		}
+
+		private string CreateUiForFutureComputation(clsJQuery.jqCheckBox checkDoFutureComputation, DataCurveTriggerSettings triggerSettings)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine(
+				"<tr><th class='not_mapped_style' style='text-align:left' colspan='6'>Future computation:</th></tr>");
+			sb.AppendLine($"<tr><td colspan='7'>{checkDoFutureComputation.Build()} Use future computation</td></tr>");
+			sb.AppendLine(CreateFutureComputationUi(triggerSettings));
+			return sb.ToString();
+		}
+
+		private string CreateFutureComputationUi(DataCurveTriggerSettings triggerSettings)
+		{
+			var timePicker = CreateTimePicker(triggerSettings.FutureComputationTimeSpan, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.FutureTimeSpanKey);
+			var thresholdValueTextbox=CreateJqTextBox(Constants.FutureThresholdValueKey,"",triggerSettings,5);
+			return ($"<tr><td>and the computed value reaches the threshold {thresholdValueTextbox} within {timePicker}</td></tr>");
+		}
+
+		private string CreateJqTextBox(string parameter, string defaultText,DataCurveTriggerSettings triggerSettings, int defaultsize = 10)
+		{
+			var textBox = new clsJQuery.jqTextBox(
+				parameter + triggerSettings.UID+ triggerSettings.UniqueControllerId, "text", defaultText, Constants.EventsPage, defaultsize, true);
+			if(triggerSettings.FutureThresholdValue.HasValue)
+				textBox.defaultText = triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
+			return textBox.Build();
+		}
+
 
 		private string CreateAscendingDescendingDropdown(AscDescEnum ascDescChosen, string uid, string uniqueControllerId)
 		{
@@ -102,7 +155,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 			{
 				noSelectionMade = true;
 			}
-			var listToReturn = new clsJQuery.jqDropList(deviceDropDownParameter + uid + uniqueControllerId, EventsPage, true);
+			var listToReturn = new clsJQuery.jqDropList(deviceDropDownParameter + uid + uniqueControllerId, Constants.EventsPage, true);
 			listToReturn.AddItem("", "-1", noSelectionMade);
 			foreach (var hsDevice in devicesFromFloorAndRoom)
 			{
@@ -114,7 +167,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		}
 		private clsJQuery.jqDropList CreateDropDownFromNameValueCollection(string dropDownParameter, string chosenValue, NameValueCollection unitList, string uid, string uniqueControllerId, bool noDefaultBlank = false)
 		{
-			var dropList = new clsJQuery.jqDropList(dropDownParameter + uid + uniqueControllerId, EventsPage, true);
+			var dropList = new clsJQuery.jqDropList(dropDownParameter + uid + uniqueControllerId, Constants.EventsPage, true);
 			if (!noDefaultBlank)
 				dropList.AddItem("", "", false);
 			foreach (var unit in unitList.AllKeys)
@@ -126,7 +179,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 
 		private clsJQuery.jqDropList CreateDropDown(string dropDownParameter, string chosenValue, List<string> unitList, string uid, string uniqueControllerId)
 		{
-			var dropList = new clsJQuery.jqDropList(dropDownParameter + uid + uniqueControllerId, EventsPage, true);
+			var dropList = new clsJQuery.jqDropList(dropDownParameter + uid + uniqueControllerId, Constants.EventsPage, true);
 			dropList.AddItem("", "", false);
 			foreach (var unit in unitList)
 			{
@@ -137,9 +190,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		}
 
 
-		private string CreateTimePicker(TimeSpan? timeSpanChosen, string uid, string uniqueControllerId)
+		private string CreateTimePicker(TimeSpan? timeSpanChosen, string uid, string uniqueControllerId, string key)
 		{
-			var timePicker = new clsJQuery.jqTimeSpanPicker(Constants.TimeSpanKey + uid + uniqueControllerId, "", EventsPage, true);
+			var timePicker = new clsJQuery.jqTimeSpanPicker(key + uid + uniqueControllerId, "", Constants.EventsPage, true);
 			timePicker.showDays = false;
 			timePicker.showSeconds = false;
 			timePicker.defaultTimeSpan = new TimeSpan(1, 0, 0);

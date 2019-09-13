@@ -22,24 +22,37 @@ namespace DataCurveSeer.Storage
 	    private bool _disposed;
 	    private static Object _lockObject = new Object();
 	    private readonly string _repoFilename = $"Data/{Utility.PluginName}/{Utility.PluginName}.db";
+	    private readonly string _pathToRepo;
 
-		public StorageHandler(ILogging logging)
+		public StorageHandler(ILogging logging,string dbPath=null)
 	    {
 		    _logging = logging;
-		    var baseDirectory = Directory.GetCurrentDirectory();
-		    var fullPathToDb = Path.Combine(baseDirectory, _repoFilename);
-		    if (File.Exists(fullPathToDb)) return;
+		    var fullPathToDb = CreateDbPath();
+		    if (!string.IsNullOrEmpty(dbPath))
+		    {
+			    fullPathToDb = dbPath;
+		    }
+
+		    _pathToRepo = fullPathToDb;
+
+			if (File.Exists(fullPathToDb)) return;
 		    _logging.LogDebug("Creating folder for liteDb database");
 		    var dbDirectory = Path.GetDirectoryName(fullPathToDb);
 		    if (dbDirectory != null)
 			    Directory.CreateDirectory(dbDirectory);
 		}
 
+		private string CreateDbPath()
+		{
+			var baseDirectory = Directory.GetCurrentDirectory();
+			return Path.Combine(baseDirectory, _repoFilename);
+		}
+
 		public void AddDeviceValueToDatabase(double value, DateTime dateTimeOfMeasurement, int referenceId)
 		{
 			//lock (_lockObject)
 			//{
-				using (var db = new LiteDatabase(_repoFilename))
+				using (var db = new LiteDatabase(_pathToRepo))
 				{
 					var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
 					_logging.LogDebug("LitDbRepo: inserting value into liteDb");
@@ -54,7 +67,7 @@ namespace DataCurveSeer.Storage
 		{
 			//lock (_lockObject)
 			//{
-				using (var db = new LiteDatabase(_repoFilename))
+				using (var db = new LiteDatabase(_pathToRepo))
 				{
 					var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
 					_logging.LogDebug($"LitDbRepo: deleting values for deviceId {deviceId}");
@@ -78,7 +91,7 @@ namespace DataCurveSeer.Storage
 
 			//lock (_lockObject)
 			//{
-				using (var db = new LiteRepository(_repoFilename))
+				using (var db = new LiteRepository(_pathToRepo))
 				{
 					_logging.LogDebug($"LitDbRepo: selecting values for deviceId {deviceId} with starDateTime {startDateTime.ToString()} and endDateTime {endDateTime.ToString()}");
 

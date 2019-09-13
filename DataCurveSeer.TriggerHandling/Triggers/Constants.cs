@@ -9,7 +9,9 @@
 		public static string RoomKey = "RoomDropdown_";
 		public static string DeviceDropdownKey= "DeviceDropdown_";
 		public static string TimeSpanKey= "TimeSpan_";
-		public static string Uid = "Uid_";
-		public static string EvRef = "EvRef_";
+		public static string FutureThresholdValueKey = "ThresholdValue_";
+		public static string FutureTimeSpanKey = "TimespanToReachThreshold_";
+		public static string  CheckIfUseFutureComputationKey = "CheckIfUseFutureComputation_";
+		public const string EventsPage = "events";
 	}
 }

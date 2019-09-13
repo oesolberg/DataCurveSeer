@@ -10,18 +10,18 @@ using MathNet.Numerics;
 
 namespace DataCurveSeer.DataCurveComputation
 {
-	
-	public class DataCurveComputationHandler: IDataCurveComputationHandler
+
+	public class DataCurveComputationHandler : IDataCurveComputationHandler
 	{
-		
-		private static Object _lock=new Object();
+
+		private static Object _lock = new Object();
 		private ILogging _logging;
 
 		public DataCurveComputationHandler(ILogging logging)
 		{
 			_logging = logging;
 		}
-		public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc)
+		public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double? thresholdValue = null, TimeSpan? timeToReachThreshold = null)
 		{
 			if (dataPoints != null && dataPoints.Count > 1)
 			{
@@ -33,10 +33,31 @@ namespace DataCurveSeer.DataCurveComputation
 					_logging.LogDebug($"computing the curve for device:{dataPoints.First().DeviceId}");
 					var resultSet = ComputeLinearData(dataPoints);
 					_logging.LogDebug($"result of computing IsDescending: {resultSet.IsDescending.ToString()} IsAscending:{resultSet.IsAscending.ToString()} Slope:{resultSet.Slope.ToString("#.###")}");
-					if (ascDesc == AscDescEnum.Ascending && resultSet.IsAscending)
-						return true;
-					if (ascDesc == AscDescEnum.Descending && resultSet.IsDescending)
-						return true;
+
+					if (thresholdValue.HasValue && timeToReachThreshold.HasValue)
+					{
+						//Hente ut siste verdi
+						var lastValue = dataPoints.LastOrDefault();
+						if (lastValue != null)
+						{
+							var totalNumberOfSecondsInTimeSpan = timeToReachThreshold.Value.TotalSeconds;
+							var futureValueAtEndOfTimeSpan = totalNumberOfSecondsInTimeSpan * resultSet.Slope;
+							_logging.LogDebug($"Result of future computation. With slope {resultSet.Slope} for {totalNumberOfSecondsInTimeSpan} seconds computed value is {futureValueAtEndOfTimeSpan} (threshold:{thresholdValue.Value}");
+							resultSet.FutureValueAtEndOfTimeSpan = futureValueAtEndOfTimeSpan;
+							if (ascDesc == AscDescEnum.Ascending && futureValueAtEndOfTimeSpan >= thresholdValue.Value)
+								return true;
+							if (ascDesc == AscDescEnum.Descending && futureValueAtEndOfTimeSpan <= thresholdValue.Value)
+								return true;
+						}
+					}
+					else
+					{
+						//Only test curves
+						if (ascDesc == AscDescEnum.Ascending && resultSet.IsAscending)
+							return true;
+						if (ascDesc == AscDescEnum.Descending && resultSet.IsDescending)
+							return true;
+					}
 				}
 			}
 			return false;
@@ -44,8 +65,8 @@ namespace DataCurveSeer.DataCurveComputation
 
 		private ComputedResultSet ComputeLinearData(List<DeviceValue> dataPoints)
 		{
-			var resultSet=new ComputedResultSet();
-			double[] xdata = CreateXDataFromDateTime(dataPoints);
+			var resultSet = new ComputedResultSet();
+			double[] xdata = CreateXDataFromDateTimeToTotalSeconds(dataPoints);
 			double[] ydata = CreateYDataFromDoubleValues(dataPoints);
 
 			Tuple<double, double> p = Fit.Line(xdata, ydata);
@@ -66,23 +87,19 @@ namespace DataCurveSeer.DataCurveComputation
 			return resultSet;
 		}
 
-		private double[] CreateXDataFromDateTime(List<DeviceValue> dataPoints)
+		private double[] CreateXDataFromDateTimeToTotalSeconds(List<DeviceValue> dataPoints)
 		{
+			var firstMeasurement = dataPoints.FirstOrDefault();
+			var firstDateTime = firstMeasurement?.DateTimeOfMeasurment ?? DateTime.MinValue;
+
 			double[] xData = new double[dataPoints.Count];
 			var i = 0;
 			foreach (var deviceValue in dataPoints)
 			{
-				xData[i] = CreateDoubleValueFromDateTime(deviceValue.DateTimeOfMeasurment);
+				xData[i] = (deviceValue.DateTimeOfMeasurment - firstDateTime).TotalSeconds;
 				i++;
 			}
 			return xData;
-		}
-
-		private double CreateDoubleValueFromDateTime(DateTime deviceValue)
-		{
-
-			double returnValue = deviceValue.Ticks;
-			return returnValue;
 		}
 
 		private double[] CreateYDataFromDoubleValues(List<DeviceValue> dataPoints)
@@ -104,5 +121,6 @@ namespace DataCurveSeer.DataCurveComputation
 		public bool IsAscending { get; set; }
 		public double Intercept { get; set; }
 		public double Slope { get; set; }
+		public double FutureValueAtEndOfTimeSpan { get; set; }
 	}
 }
