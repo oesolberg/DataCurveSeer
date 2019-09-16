@@ -39,8 +39,19 @@ namespace DataCurveSeer.TriggerHandling
 			_collectionFactory = collectionFactory;
 			_homeSeerHandler = homeSeerHandler;
 			_storageHandler = storageHandler;
+			_logging.LogDebug("Creating trigger types");
 			_triggerTypes = CreateTriggerTypes();
-			GetPluginTriggersFromHomeSeer();
+
+			_logging.LogDebug("Starting thread to fetch triggers");
+			GetPluginTriggersFromHomeSeerInNewThread();
+
+			_logging.LogDebug("Done init TriggerHandler");
+		}
+
+		private void GetPluginTriggersFromHomeSeerInNewThread()
+		{
+			var getTriggerThread=new Thread(GetPluginTriggersFromHomeSeer);
+			getTriggerThread.Start();
 		}
 
 		public List<int> WatchedEventDeviceIdIds => _watchedEventDeviceIds;

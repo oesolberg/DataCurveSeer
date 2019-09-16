@@ -6,7 +6,7 @@ Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dage
 //Helt siste oppgave
 Litt stats på antall events mottatt og antall events som førte til endringer i databasen? Men dette blir kun noe nice-to-have i mainplugin
 
-//Legge oppstart i egen tråd siden det nå tar laaaang tid å starte opp.
+DONE?//Legge oppstart i egen tråd siden det nå tar laaaang tid å starte opp.
 
 //Lage en eller annen queue for sjekk av triggere og la ting ligge der i x antall sekunder før man retrigger. Hvis det kommer nye forespørsler på kø så venter man enda noen sekunder. Dette for å ikke hamre på HomeSeer når det gjøres ting med en trigger. Vi trenger egentlig bare å oppdatere når man er ferdig med å justere. Ventetid 60 sekunder?
 

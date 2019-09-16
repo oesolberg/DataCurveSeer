@@ -68,7 +68,7 @@ namespace IntegrationTests
 
 			var result = storageHandler.GetValuesForDevice(deviceId, new DateTime(2019, 9, 12), new DateTime(2019, 9, 12, 1, 0, 0));
 			var sut = new DataCurveComputationHandler(_logging);
-			var finalResult = sut.TriggerTrue(result, ascDesc: DataCurveSeer.Common.AscDescEnum.Ascending,thresholdValue: 10.5d,timeToReachThreshold: new TimeSpan(0,3,0,0));
+			var finalResult = sut.TriggerTrue(result, ascDesc: DataCurveSeer.Common.AscDescEnum.Ascending,threshold: 10.5d,timeToReachThreshold: new TimeSpan(0,3,0,0));
 			finalResult.ShouldBeFalse();
 
 	    }

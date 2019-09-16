@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace DataCurveSeer.DataCurveComputation
 		{
 			_logging = logging;
 		}
-		public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double? thresholdValue = null, TimeSpan? timeToReachThreshold = null)
+		public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double? threshold = null, TimeSpan? timeToReachThreshold = null)
 		{
 			if (dataPoints != null && dataPoints.Count > 1)
 			{
@@ -31,31 +32,34 @@ namespace DataCurveSeer.DataCurveComputation
 				lock (_lock)
 				{
 					_logging.LogDebug($"computing the curve for device:{dataPoints.First().DeviceId}");
-					var resultSet = ComputeLinearData(dataPoints);
-					_logging.LogDebug($"result of computing IsDescending: {resultSet.IsDescending.ToString()} IsAscending:{resultSet.IsAscending.ToString()} Slope:{resultSet.Slope.ToString("#.###")}");
+					var resultSetComputedLinearData = ComputeLinearData(dataPoints);
+					var culture = CultureInfo.CreateSpecificCulture("en-US");
+					_logging.LogDebug($"result of computing IsDescending: {resultSetComputedLinearData.IsDescending.ToString()} IsAscending:{resultSetComputedLinearData.IsAscending.ToString()} Slope:{resultSetComputedLinearData.Slope.ToString("#.###", culture)}");
 
-					if (thresholdValue.HasValue && timeToReachThreshold.HasValue)
+					var resultsetLastValues = ComputeLastValues(dataPoints, ascDesc);
+
+					if (threshold.HasValue && timeToReachThreshold.HasValue)
 					{
 						//Hente ut siste verdi
-						var lastValue = dataPoints.LastOrDefault();
-						if (lastValue != null)
+						var resultSetComputedFutureLine = ComputeFutureValues(dataPoints, ascDesc, resultSetComputedLinearData, threshold.Value, timeToReachThreshold.Value);
+						_logging.LogDebug($"ascDec Descending{ascDesc == AscDescEnum.Descending} resultSetComputedFutureLine.TriggerTrue: {resultSetComputedFutureLine.TriggerTrue} resultSetComputedLinearData.IsDescending: {resultSetComputedLinearData.IsDescending } resultSetComputedLinearData.IsAscending: {resultSetComputedLinearData.IsAscending }  resultsetLastValues.LastSlope: {resultsetLastValues.LastSlope} resultsetLastValues.LastValueHighest: {resultsetLastValues.LastValueHighest } resultsetLastValues.LastValueLowest: {resultsetLastValues.LastValueLowest} ");
+						if (ascDesc==AscDescEnum.Ascending && resultSetComputedFutureLine.TriggerTrue && resultSetComputedLinearData.IsAscending && resultsetLastValues.LastSlope > 0 && resultsetLastValues.LastValueHighest)
 						{
-							var totalNumberOfSecondsInTimeSpan = timeToReachThreshold.Value.TotalSeconds;
-							var futureValueAtEndOfTimeSpan = totalNumberOfSecondsInTimeSpan * resultSet.Slope;
-							_logging.LogDebug($"Result of future computation. With slope {resultSet.Slope} for {totalNumberOfSecondsInTimeSpan} seconds computed value is {futureValueAtEndOfTimeSpan} (threshold:{thresholdValue.Value}");
-							resultSet.FutureValueAtEndOfTimeSpan = futureValueAtEndOfTimeSpan;
-							if (ascDesc == AscDescEnum.Ascending && futureValueAtEndOfTimeSpan >= thresholdValue.Value)
-								return true;
-							if (ascDesc == AscDescEnum.Descending && futureValueAtEndOfTimeSpan <= thresholdValue.Value)
-								return true;
+							return true;
+						}
+						if (ascDesc == AscDescEnum.Descending && resultSetComputedFutureLine.TriggerTrue && resultSetComputedLinearData.IsDescending && resultsetLastValues.LastSlope < 0 && resultsetLastValues.LastValueLowest)
+						{
+							return true;
 						}
 					}
+
 					else
 					{
 						//Only test curves
-						if (ascDesc == AscDescEnum.Ascending && resultSet.IsAscending)
+						_logging.LogDebug($"ascDec Descending{ascDesc == AscDescEnum.Descending}  resultSetComputedLinearData.IsDescending: {resultSetComputedLinearData.IsDescending } resultSetComputedLinearData.IsAscending: {resultSetComputedLinearData.IsAscending }  resultsetLastValues.LastSlope: {resultsetLastValues.LastSlope} resultsetLastValues.LastValueHighest: {resultsetLastValues.LastValueHighest } resultsetLastValues.LastValueLowest: {resultsetLastValues.LastValueLowest} ");
+						if (ascDesc == AscDescEnum.Ascending && resultSetComputedLinearData.IsAscending && resultsetLastValues.LastSlope>0 && resultsetLastValues.LastValueHighest)
 							return true;
-						if (ascDesc == AscDescEnum.Descending && resultSet.IsDescending)
+						if (ascDesc == AscDescEnum.Descending && resultSetComputedLinearData.IsDescending && resultsetLastValues.LastSlope<0 && resultsetLastValues.LastValueLowest)
 							return true;
 					}
 				}
@@ -63,9 +67,57 @@ namespace DataCurveSeer.DataCurveComputation
 			return false;
 		}
 
-		private ComputedResultSet ComputeLinearData(List<DeviceValue> dataPoints)
+		private ResultSetComputedFutureValue ComputeFutureValues(List<DeviceValue> dataPoints, AscDescEnum ascDesc, ComputedResultSetFitLine resultSetComputedLinearData, double threshold, TimeSpan timeToReachThreshold)
 		{
-			var resultSet = new ComputedResultSet();
+			var resultSet = new ResultSetComputedFutureValue();
+			var lastValue = dataPoints.LastOrDefault();
+			if (lastValue != null)
+			{
+				
+				var totalNumberOfSecondsInTimeSpan = timeToReachThreshold.TotalSeconds;
+				var futureValueAtEndOfTimeSpan = totalNumberOfSecondsInTimeSpan * resultSetComputedLinearData.Slope;
+				_logging.LogDebug($"Result of future computation. With slope {resultSetComputedLinearData.Slope} for {totalNumberOfSecondsInTimeSpan} seconds computed value is {futureValueAtEndOfTimeSpan} (threshold:{threshold})");
+				resultSet.FutureValueAtEndOfTimeSpan = futureValueAtEndOfTimeSpan;
+
+				if (ascDesc == AscDescEnum.Ascending && futureValueAtEndOfTimeSpan >= threshold)
+					resultSet.TriggerTrue = true;
+				if (ascDesc == AscDescEnum.Descending && futureValueAtEndOfTimeSpan <= threshold)
+					resultSet.TriggerTrue = true;
+			}
+
+			return resultSet;
+		}
+
+		private ComputeLastValuesResultSet ComputeLastValues(List<DeviceValue> dataPoints, AscDescEnum ascDesc)
+		{
+			var resultSet = new ComputeLastValuesResultSet();
+			var maxValue = dataPoints.Max(x => x.Value);
+			var minValue = dataPoints.Min(x => x.Value);
+
+			var lastRegisteredMeasurementTime = dataPoints.Max(x => x.DateTimeOfMeasurment);
+			var lastDataPoint = dataPoints.FirstOrDefault(x => x.DateTimeOfMeasurment == lastRegisteredMeasurementTime);
+			var secondlastRegisteredMeasurementTime = dataPoints.Where(x => x.DateTimeOfMeasurment < lastRegisteredMeasurementTime).Max(x => x.DateTimeOfMeasurment);
+			var secondLastDataPoint =
+				dataPoints.FirstOrDefault(x => x.DateTimeOfMeasurment == secondlastRegisteredMeasurementTime);
+
+			resultSet.LastSlope = (lastDataPoint.Value - secondLastDataPoint.Value) /
+							((lastDataPoint.DateTimeOfMeasurment - secondLastDataPoint.DateTimeOfMeasurment)
+								.TotalSeconds);
+			if (minValue == lastDataPoint.Value)
+			{
+				resultSet.LastValueLowest = true;
+			}
+			if (maxValue == lastDataPoint.Value)
+			{
+				resultSet.LastValueHighest = true;
+			}
+
+			return resultSet;
+		}
+
+		private ComputedResultSetFitLine ComputeLinearData(List<DeviceValue> dataPoints)
+		{
+			var resultSet = new ComputedResultSetFitLine();
 			double[] xdata = CreateXDataFromDateTimeToTotalSeconds(dataPoints);
 			double[] ydata = CreateYDataFromDoubleValues(dataPoints);
 
@@ -115,7 +167,20 @@ namespace DataCurveSeer.DataCurveComputation
 		}
 	}
 
-	internal class ComputedResultSet
+	internal class ComputeLastValuesResultSet
+	{
+		public bool LastValueHighest { get; set; }
+		public bool LastValueLowest { get; set; }
+		public double LastSlope { get; set; }
+	}
+
+	internal class ResultSetComputedFutureValue
+	{
+		public bool TriggerTrue { get; set; }
+		public double FutureValueAtEndOfTimeSpan { get; set; }
+	}
+
+	internal class ComputedResultSetFitLine
 	{
 		public bool IsDescending { get; set; }
 		public bool IsAscending { get; set; }
