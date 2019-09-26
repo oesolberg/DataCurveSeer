@@ -32,7 +32,10 @@ namespace DataCurveSeer.DataCurveComputation
 				lock (_lock)
 				{
 					_logging.LogDebug($"computing the curve for device:{dataPoints.First().DeviceId}");
-					var resultSetComputedLinearData = ComputeLinearData(dataPoints);
+
+                    var fitLineHandler=new FitLineHandler();
+					var resultSetComputedLinearData = fitLineHandler.ComputeLinearData(dataPoints);
+
 					var culture = CultureInfo.CreateSpecificCulture("en-US");
 					_logging.LogDebug($"result of computing IsDescending: {resultSetComputedLinearData.IsDescending.ToString()} IsAscending:{resultSetComputedLinearData.IsAscending.ToString()} Slope:{resultSetComputedLinearData.Slope.ToString("#.###", culture)}");
 
@@ -115,77 +118,14 @@ namespace DataCurveSeer.DataCurveComputation
 			return resultSet;
 		}
 
-		private ComputedResultSetFitLine ComputeLinearData(List<DeviceValue> dataPoints)
-		{
-			var resultSet = new ComputedResultSetFitLine();
-			double[] xdata = CreateXDataFromDateTimeToTotalSeconds(dataPoints);
-			double[] ydata = CreateYDataFromDoubleValues(dataPoints);
+		
 
-			Tuple<double, double> p = Fit.Line(xdata, ydata);
-			double intercept = p.Item1; // == 10; intercept -- No clue what this is
-			double slope = p.Item2; // == 0.5; slope
-			resultSet.Slope = slope;
-			resultSet.Intercept = intercept;
-			if (slope > 0)
-			{
-				resultSet.IsAscending = true;
-			}
-
-			if (slope < 0)
-			{
-				resultSet.IsDescending = true;
-			}
-
-			return resultSet;
-		}
-
-		private double[] CreateXDataFromDateTimeToTotalSeconds(List<DeviceValue> dataPoints)
-		{
-			var firstMeasurement = dataPoints.FirstOrDefault();
-			var firstDateTime = firstMeasurement?.DateTimeOfMeasurment ?? DateTime.MinValue;
-
-			double[] xData = new double[dataPoints.Count];
-			var i = 0;
-			foreach (var deviceValue in dataPoints)
-			{
-				xData[i] = (deviceValue.DateTimeOfMeasurment - firstDateTime).TotalSeconds;
-				i++;
-			}
-			return xData;
-		}
-
-		private double[] CreateYDataFromDoubleValues(List<DeviceValue> dataPoints)
-		{
-			double[] yData = new double[dataPoints.Count];
-			var i = 0;
-			foreach (var deviceValue in dataPoints)
-			{
-				yData[i] = deviceValue.Value;
-				i++;
-			}
-			return yData;
-		}
+		
 	}
 
-	internal class ComputeLastValuesResultSet
-	{
-		public bool LastValueHighest { get; set; }
-		public bool LastValueLowest { get; set; }
-		public double LastSlope { get; set; }
-	}
-
-	internal class ResultSetComputedFutureValue
+    internal class ResultSetComputedFutureValue
 	{
 		public bool TriggerTrue { get; set; }
-		public double FutureValueAtEndOfTimeSpan { get; set; }
-	}
-
-	internal class ComputedResultSetFitLine
-	{
-		public bool IsDescending { get; set; }
-		public bool IsAscending { get; set; }
-		public double Intercept { get; set; }
-		public double Slope { get; set; }
 		public double FutureValueAtEndOfTimeSpan { get; set; }
 	}
 }

@@ -11,4 +11,9 @@ namespace DataCurveSeer.Common.Interfaces
 			TimeSpan? timeToReachThreshold = null);
 	}
 
+    public interface IDataCurveComputationHandlerB
+    {
+        //bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc);
+        bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double thresholdValue);
+    }
 }

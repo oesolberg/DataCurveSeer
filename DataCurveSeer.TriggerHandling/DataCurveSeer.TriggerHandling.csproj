@@ -7,7 +7,7 @@
     <ProjectGuid>{2B46A025-BB23-4F14-AAD9-419987ECCCF7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataCurve.TriggerHandling</RootNamespace>
+    <RootNamespace>DataCurveSeer.TriggerHandling</RootNamespace>
     <AssemblyName>DataCurve.TriggerHandling</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -64,6 +65,10 @@
     <Compile Include="Triggers\DataCurveTriggerSettings.cs" />
     <Compile Include="Triggers\DataCurveTriggerUi.cs" />
     <Compile Include="ParameterExtraction.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTrigger.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerProcessPostUi.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerSettings.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerUi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -78,5 +83,6 @@
       <Name>DataCurveSeer.DataCurveComputation</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
