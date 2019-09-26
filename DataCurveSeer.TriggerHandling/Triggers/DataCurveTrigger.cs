@@ -362,7 +362,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 					{
 						triggerSettings.FutureComputationTimeSpan = ParameterExtraction.GetTimeSpanFromObject(formattedAction[dataKey]);
 					}
-					if (dataKey.Contains(Constants.FutureThresholdValueKey))
+					if (dataKey.Contains(Constants.ThresholdValueKey))
 					{
 						triggerSettings.FutureThresholdValue = ParameterExtraction.GetDoubleOrNull(formattedAction[dataKey]);
 					}

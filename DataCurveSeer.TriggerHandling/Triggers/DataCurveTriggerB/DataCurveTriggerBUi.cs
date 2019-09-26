@@ -52,37 +52,37 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 				triggerSettings.FloorChosen = "";
 			}
 			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen, triggerSettings.DeviceIdChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
-			var timePicker = CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.TimeSpanKey);
+			var timePicker ="timepicker";//= CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.TimeSpanKey);
 			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending, triggerSettings.UidString, triggerSettings.UniqueControllerId);
 			sb.AppendLine($"<tr><td>A data curve of device values for the device {floorDropDown} {roomDropdown}  {deviceDropdown} has had {ascendingDescendingDropdown} curve for the last {timePicker}</td></tr>");
 			//Future computation ui
-			sb.AppendLine(CreateChoicesForFutureComputation(triggerSettings));
+			//sb.AppendLine(CreateChoicesForFutureComputation(triggerSettings));
 			sb.AppendLine("</table>");
 			return sb.ToString();
 		}
 
-		private string CreateChoicesForFutureComputation(DataCurveTriggerBSettings triggerSettings)
-		{
-			var sb = new StringBuilder();
-			var checkDoFutureComputation = new clsJQuery.jqCheckBox(Constants.CheckIfUseFutureComputationKey + triggerSettings.UID + triggerSettings.UniqueControllerId, "", Constants.EventsPage, true, true);
-			checkDoFutureComputation.@checked = triggerSettings.UseFutureComputation;
-			checkDoFutureComputation.toolTip =
-				"Try to estimate the future value";
+		//private string CreateChoicesForFutureComputation(DataCurveTriggerBSettings triggerSettings)
+		//{
+		//	var sb = new StringBuilder();
+		//	var checkDoFutureComputation = new clsJQuery.jqCheckBox(Constants.CheckIfUseFutureComputationKey + triggerSettings.UID + triggerSettings.UniqueControllerId, "", Constants.EventsPage, true, true);
+		//	checkDoFutureComputation.@checked = triggerSettings.UseFutureComputation;
+		//	checkDoFutureComputation.toolTip =
+		//		"Try to estimate the future value";
 
-			if (!triggerSettings.UseFutureComputation)
-			{
-				var fontType = "class='not_mapped_style' style='font-style: italic'";
-				sb.AppendLine("<tr><th class='not_mapped_style' style='text-align:left'>Future computation:</th></tr>");
+		//	if (!triggerSettings.UseFutureComputation)
+		//	{
+		//		var fontType = "class='not_mapped_style' style='font-style: italic'";
+		//		sb.AppendLine("<tr><th class='not_mapped_style' style='text-align:left'>Future computation:</th></tr>");
 
-				sb.AppendLine($"<tr><td {fontType} colspan='7'>{checkDoFutureComputation.Build()} No future computation </td></tr>");
-			}
-			else
-			{
-				sb.AppendLine(CreateUiForFutureComputation(checkDoFutureComputation,triggerSettings));
-			}
+		//		sb.AppendLine($"<tr><td {fontType} colspan='7'>{checkDoFutureComputation.Build()} No future computation </td></tr>");
+		//	}
+		//	else
+		//	{
+		//		sb.AppendLine(CreateUiForFutureComputation(checkDoFutureComputation,triggerSettings));
+		//	}
 
-			return sb.ToString();
-		}
+		//	return sb.ToString();
+		//}
 
 		private string CreateUiForFutureComputation(clsJQuery.jqCheckBox checkDoFutureComputation, DataCurveTriggerBSettings triggerSettings)
 		{
@@ -90,23 +90,23 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 			sb.AppendLine(
 				"<tr><th class='not_mapped_style' style='text-align:left' colspan='6'>Future computation:</th></tr>");
 			sb.AppendLine($"<tr><td colspan='7'>{checkDoFutureComputation.Build()} Use future computation</td></tr>");
-			sb.AppendLine(CreateFutureComputationUi(triggerSettings));
+			//sb.AppendLine(CreateFutureComputationUi(triggerSettings));
 			return sb.ToString();
 		}
 
-		private string CreateFutureComputationUi(DataCurveTriggerBSettings triggerSettings)
-		{
-			var timePicker = CreateTimePicker(triggerSettings.FutureComputationTimeSpan, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.FutureTimeSpanKey);
-			var thresholdValueTextbox=CreateJqTextBox(Constants.FutureThresholdValueKey,"",triggerSettings,5);
-			return ($"<tr><td>and the computed value reaches the threshold {thresholdValueTextbox} within {timePicker}</td></tr>");
-		}
+		//private string CreateFutureComputationUi(DataCurveTriggerBSettings triggerSettings)
+		//{
+		//	var timePicker = CreateTimePicker(triggerSettings.FutureComputationTimeSpan, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.FutureTimeSpanKey);
+		//	var thresholdValueTextbox=CreateJqTextBox(Constants.ThresholdValueKey,"",triggerSettings,5);
+		//	return ($"<tr><td>and the computed value reaches the threshold {thresholdValueTextbox} within {timePicker}</td></tr>");
+		//}
 
 		private string CreateJqTextBox(string parameter, string defaultText,DataCurveTriggerBSettings triggerSettings, int defaultsize = 10)
 		{
 			var textBox = new clsJQuery.jqTextBox(
 				parameter + triggerSettings.UID+ triggerSettings.UniqueControllerId, "text", defaultText, Constants.EventsPage, defaultsize, true);
-			if(triggerSettings.FutureThresholdValue.HasValue)
-				textBox.defaultText = triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
+			if(triggerSettings.ThresholdValue.HasValue)
+				textBox.defaultText = triggerSettings.ThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
 			return textBox.Build();
 		}
 

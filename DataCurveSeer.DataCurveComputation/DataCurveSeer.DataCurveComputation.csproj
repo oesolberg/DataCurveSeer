@@ -50,7 +50,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ComputationTriggerB.cs" />
+    <Compile Include="ComputationTriggerBHandler.cs" />
     <Compile Include="ComputedResultSetFitLine.cs" />
     <Compile Include="ComputeLastValuesResultSet.cs" />
     <Compile Include="DataCurveComputationHandler.cs" />

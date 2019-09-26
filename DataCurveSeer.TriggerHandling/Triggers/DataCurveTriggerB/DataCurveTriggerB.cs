@@ -20,7 +20,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		private DataCurveTriggerBUi _dataCurveUi;
 		private IHomeSeerHandler _homeSeerHandler;
 		private IHSApplication _hs;
-		private IDataCurveComputationHandler _dataCurveComputationHandler;
+		private IDataCurveComputationHandlerB _dataCurveComputationHandler;
 
 		public string GetTriggerName() => Utility.PluginName + ": A data curve of device values ...";
 		public int TriggerNumber { get; } = 1;
@@ -33,12 +33,13 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		public DataCurveTriggerB(IHSApplication hs, ILogging logging, IHsCollectionFactory collectionFactory,
 			IHomeSeerHandler homeSeerHandler, IReformatCopiedAction reformatCopiedAction = null,
 			IDataCurveTriggerUi dataCurveUi = null,
-			IDataCurveComputationHandler dataCurveComputationHandler=null)
+            IDataCurveComputationHandlerB dataCurveComputationHandler =null)
 		{
 			_collectionFactory = collectionFactory;
 			_logging = logging;
 			_homeSeerHandler = homeSeerHandler;
 			_hs = hs;
+            _dataCurveComputationHandler = dataCurveComputationHandler;
 			if (reformatCopiedAction == null)
 			{
 				_reformatCopiedAction = new ReformatCopiedAction(_logging);
@@ -49,9 +50,9 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 				_dataCurveUi = new DataCurveTriggerBUi(_homeSeerHandler, _hs);
 			}
 
-			if (dataCurveComputationHandler == null)
+			if (_dataCurveComputationHandler == null)
 			{
-				_dataCurveComputationHandler = new DataCurveComputationHandler(_logging);
+				_dataCurveComputationHandler = new ComputationTriggerBHandler(_logging);
 			}
 		}
 
@@ -120,15 +121,14 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		{
 			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
 			if (_triggerSettings != null && _triggerSettings.GetTriggerConfigured())
-			{
-				var fromDate = SystemDateTime.Now().AddHours(_triggerSettings.TimeSpanChosen.Value.TotalHours * -1);
-				var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, fromDate,
+            {
+                var thresholdValue = _triggerSettings.ThresholdValue;
+
+				var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, SystemDateTime.Now().AddHours(-3),
 					SystemDateTime.Now());
 				_logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler==null}");
-				if(_triggerSettings.UseFutureComputation && _triggerSettings.GetTriggerConfigured())
-					return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending,_triggerSettings.FutureThresholdValue,_triggerSettings.FutureComputationTimeSpan);
 
-				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending);
+				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending,thresholdValue.Value);
 			}
 			return false;
 		}
@@ -205,23 +205,26 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 			var infoInHeader = string.Empty;
 			if (!_isCondition)
 				return "This can never be a trigger, only a condition";
-			if (!ChangeValueTrigger(actionInfo.evRef))
-			{
-				infoInHeader=
-					"The initial trigger needs to be of type 'This device just had its value set or changed' or 'This device has a value that just changed:' to collect data properly<br/>";
-			}
+			//if (!ChangeValueTrigger(actionInfo.evRef))
+			//{
+			//	infoInHeader=
+			//		"The initial trigger needs to be of type 'This device just had its value set or changed' or 'This device has a value that just changed:' to collect data properly<br/>";
+			//}
 			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
 			var deviceInfo = GetDeviceInfoString();
 			var ascDescCurve = GetAscendingDescendingCurveInfoString();
-			var timespan = GetTimespanInfoString(_triggerSettings.TimeSpanChosen, "the last");
-			var futureSettings = string.Empty;
-			if (_triggerSettings.UseFutureComputation && _triggerSettings.FutureThresholdValue.HasValue &&
-			    _triggerSettings.FutureComputationTimeSpan.HasValue)
-			{
-				var futureTimeSpan = GetTimespanInfoString(_triggerSettings.FutureComputationTimeSpan);
-				futureSettings = $"and the computed value reaches {_triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"))} within {futureTimeSpan}";
-			}
-			return $"{infoInHeader}A data curve of device values for the device {deviceInfo} has had {ascDescCurve} curve for {timespan} {futureSettings}";
+            var thresholdValue = "";
+            if(_triggerSettings.ThresholdValue.HasValue)
+                thresholdValue=_triggerSettings.ThresholdValue.Value.ToString();
+
+			//var futureSettings = string.Empty;
+			//if (_triggerSettings.UseFutureComputation && _triggerSettings.FutureThresholdValue.HasValue &&
+			//    _triggerSettings.FutureComputationTimeSpan.HasValue)
+			//{
+			//	var futureTimeSpan = GetTimespanInfoString(_triggerSettings.FutureComputationTimeSpan);
+			//	futureSettings = $"and the computed value reaches {_triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"))} within {futureTimeSpan}";
+			//}
+			return $" The threshold value {thresholdValue} has been reached and the slope of the data curve of device values for the device {deviceInfo} has {ascDescCurve} curve";
 		}
 
 		private bool ChangeValueTrigger(int evRef)
@@ -312,18 +315,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 				triggerSettings.EvRef = triggerInfo.evRef;
 				foreach (var dataKey in formattedAction.Keys)
 				{
-					//if (dataKey.Contains(Constants.EvRef))
-					//{
-					//	triggerSettings.EvRef =
-					//		ParameterExtraction.GetIntOrMinusOneFromObject(formattedAction[dataKey]);
-					//}
-
-					//if (dataKey.Contains(Constants.Uid))
-					//{
-					//	triggerSettings.UID =
-					//		ParameterExtraction.GetIntOrMinusOneFromObject(formattedAction[dataKey]);
-					//}
-
+				
 					if (dataKey.Contains(Constants.DeviceDropdownKey))
 					{
 						triggerSettings.DeviceIdChosen =
@@ -345,26 +337,15 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 						triggerSettings.IsCondition = ParameterExtraction.GetBoolFromObject(formattedAction[dataKey]);
 					}
 
-					if (dataKey.Contains(Constants.TimeSpanKey))
-					{
-						triggerSettings.TimeSpanChosen = ParameterExtraction.GetTimeSpanFromObject(formattedAction[dataKey]);
-					}
-
+					
 					if (dataKey.Contains(Constants.AscDescKey))
 					{
 						triggerSettings.AscendingOrDescending = ParameterExtraction.GetAscDescEnumFromObject(formattedAction[dataKey]);
 					}
-					if (dataKey.Contains(Constants.CheckIfUseFutureComputationKey))
+
+                    if (dataKey.Contains(Constants.ThresholdValueKey))
 					{
-						triggerSettings.UseFutureComputation= ParameterExtraction.GetBoolFromObject(formattedAction[dataKey]);
-					}
-					if (dataKey.Contains(Constants.FutureTimeSpanKey))
-					{
-						triggerSettings.FutureComputationTimeSpan = ParameterExtraction.GetTimeSpanFromObject(formattedAction[dataKey]);
-					}
-					if (dataKey.Contains(Constants.FutureThresholdValueKey))
-					{
-						triggerSettings.FutureThresholdValue = ParameterExtraction.GetDoubleOrNull(formattedAction[dataKey]);
+						triggerSettings.ThresholdValue = ParameterExtraction.GetDoubleOrNull(formattedAction[dataKey]);
 					}
 				}
 
@@ -376,26 +357,22 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 			return null;
 		}
 
-		private TimeSpan? GetTimeSpanFromObject(object o)
-		{
-			var timespanAsString = o as string;
-			if (o != null)
-			{
-				if (!string.IsNullOrEmpty(timespanAsString))
-				{
-					return ConvertTimespanStringToTimespanOrNull();
-				}
-			}
+		//private TimeSpan? GetTimeSpanFromObject(object o)
+		//{
+		//	var timespanAsString = o as string;
+		//	if (o != null)
+		//	{
+		//		if (!string.IsNullOrEmpty(timespanAsString))
+		//		{
+		//			return ConvertTimespanStringToTimespanOrNull();
+		//		}
+		//	}
+		//	return null;
+		//}
 
-			return null;
-		}
-
-		private TimeSpan? ConvertTimespanStringToTimespanOrNull()
-		{
-			return null;
-		}
-
-		
-
+		//private TimeSpan? ConvertTimespanStringToTimespanOrNull()
+		//{
+		//	return null;
+		//}
 	}
 }

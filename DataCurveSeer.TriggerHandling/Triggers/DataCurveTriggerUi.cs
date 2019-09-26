@@ -97,7 +97,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 		private string CreateFutureComputationUi(DataCurveTriggerSettings triggerSettings)
 		{
 			var timePicker = CreateTimePicker(triggerSettings.FutureComputationTimeSpan, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.FutureTimeSpanKey);
-			var thresholdValueTextbox=CreateJqTextBox(Constants.FutureThresholdValueKey,"",triggerSettings,5);
+			var thresholdValueTextbox=CreateJqTextBox(Constants.ThresholdValueKey,"",triggerSettings,5);
 			return ($"<tr><td>and the computed value reaches the threshold {thresholdValueTextbox} within {timePicker}</td></tr>");
 		}
 

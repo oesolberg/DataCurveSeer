@@ -65,10 +65,10 @@
     <Compile Include="Triggers\DataCurveTriggerSettings.cs" />
     <Compile Include="Triggers\DataCurveTriggerUi.cs" />
     <Compile Include="ParameterExtraction.cs" />
-    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTrigger.cs" />
-    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerProcessPostUi.cs" />
-    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerSettings.cs" />
-    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerUi.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerB.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerBProcessPostUi.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerBSettings.cs" />
+    <Compile Include="Triggers\DataCurveTriggerB\DataCurveTriggerBUi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
