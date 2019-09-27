@@ -17,10 +17,12 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		public int? DeviceIdChosen { get; set; }
 		public bool IsCondition { get; set; }
 		public double? ThresholdValue { get; set; }
+        public int? NumberOfLastMeasurements { get; set; }
 
 		public bool GetTriggerConfigured()
 		{
 			if (ThresholdValue.HasValue &&
+                NumberOfLastMeasurements.HasValue && NumberOfLastMeasurements.Value>1 &&
 				DeviceIdChosen.HasValue && DeviceIdChosen.Value > 0 && IsCondition)
 				return true;
 			return false;

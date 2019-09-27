@@ -221,7 +221,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				var futureTimeSpan = GetTimespanInfoString(_triggerSettings.FutureComputationTimeSpan);
 				futureSettings = $"and the computed value reaches {_triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"))} within {futureTimeSpan}";
 			}
-			return $"{infoInHeader}A data curve of device values for the device {deviceInfo} has had {ascDescCurve} curve for {timespan} {futureSettings}";
+			return $"{infoInHeader}A data curve of device values for the device <font class=\"event_Txt_Option\">{deviceInfo}</font> has had {ascDescCurve} curve for {timespan} {futureSettings}";
 		}
 
 		private bool ChangeValueTrigger(int evRef)

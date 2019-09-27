@@ -52,62 +52,33 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 				triggerSettings.FloorChosen = "";
 			}
 			var deviceDropdown = CreateDeviceDropdown(triggerSettings.FloorChosen, triggerSettings.RoomChosen, triggerSettings.DeviceIdChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
-			var timePicker ="timepicker";//= CreateTimePicker(triggerSettings.TimeSpanChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.TimeSpanKey);
 			var ascendingDescendingDropdown = CreateAscendingDescendingDropdown(triggerSettings.AscendingOrDescending, triggerSettings.UidString, triggerSettings.UniqueControllerId);
-			sb.AppendLine($"<tr><td>A data curve of device values for the device {floorDropDown} {roomDropdown}  {deviceDropdown} has had {ascendingDescendingDropdown} curve for the last {timePicker}</td></tr>");
+
+            var thresholdDefaultText = "";
+            if (triggerSettings.ThresholdValue.HasValue)
+                thresholdDefaultText = triggerSettings.ThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
+
+            var thresholdValueTextbox = CreateJqTextBox(Constants.ThresholdValueKey, thresholdDefaultText, triggerSettings, 5);
+
+            var numberOfLastDataPointsText = "";
+            if (triggerSettings.NumberOfLastMeasurements.HasValue)
+                numberOfLastDataPointsText = triggerSettings.NumberOfLastMeasurements.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
+
+            var numberOfMeasurementsTextBox = CreateJqTextBox(Constants.NumberOfLastMeasurementsKey, numberOfLastDataPointsText, triggerSettings, 5);
+
+            sb.AppendLine($"<tr><td>The threshold value of {thresholdValueTextbox } has been reached for the device {floorDropDown} {roomDropdown}  {deviceDropdown} and it has had {ascendingDescendingDropdown} curve for its {numberOfMeasurementsTextBox} last measurements</td></tr>");
 			//Future computation ui
 			//sb.AppendLine(CreateChoicesForFutureComputation(triggerSettings));
 			sb.AppendLine("</table>");
 			return sb.ToString();
 		}
 
-		//private string CreateChoicesForFutureComputation(DataCurveTriggerBSettings triggerSettings)
-		//{
-		//	var sb = new StringBuilder();
-		//	var checkDoFutureComputation = new clsJQuery.jqCheckBox(Constants.CheckIfUseFutureComputationKey + triggerSettings.UID + triggerSettings.UniqueControllerId, "", Constants.EventsPage, true, true);
-		//	checkDoFutureComputation.@checked = triggerSettings.UseFutureComputation;
-		//	checkDoFutureComputation.toolTip =
-		//		"Try to estimate the future value";
-
-		//	if (!triggerSettings.UseFutureComputation)
-		//	{
-		//		var fontType = "class='not_mapped_style' style='font-style: italic'";
-		//		sb.AppendLine("<tr><th class='not_mapped_style' style='text-align:left'>Future computation:</th></tr>");
-
-		//		sb.AppendLine($"<tr><td {fontType} colspan='7'>{checkDoFutureComputation.Build()} No future computation </td></tr>");
-		//	}
-		//	else
-		//	{
-		//		sb.AppendLine(CreateUiForFutureComputation(checkDoFutureComputation,triggerSettings));
-		//	}
-
-		//	return sb.ToString();
-		//}
-
-		private string CreateUiForFutureComputation(clsJQuery.jqCheckBox checkDoFutureComputation, DataCurveTriggerBSettings triggerSettings)
-		{
-			var sb = new StringBuilder();
-			sb.AppendLine(
-				"<tr><th class='not_mapped_style' style='text-align:left' colspan='6'>Future computation:</th></tr>");
-			sb.AppendLine($"<tr><td colspan='7'>{checkDoFutureComputation.Build()} Use future computation</td></tr>");
-			//sb.AppendLine(CreateFutureComputationUi(triggerSettings));
-			return sb.ToString();
-		}
-
-		//private string CreateFutureComputationUi(DataCurveTriggerBSettings triggerSettings)
-		//{
-		//	var timePicker = CreateTimePicker(triggerSettings.FutureComputationTimeSpan, triggerSettings.UidString, triggerSettings.UniqueControllerId, Constants.FutureTimeSpanKey);
-		//	var thresholdValueTextbox=CreateJqTextBox(Constants.ThresholdValueKey,"",triggerSettings,5);
-		//	return ($"<tr><td>and the computed value reaches the threshold {thresholdValueTextbox} within {timePicker}</td></tr>");
-		//}
-
+	
 		private string CreateJqTextBox(string parameter, string defaultText,DataCurveTriggerBSettings triggerSettings, int defaultsize = 10)
 		{
 			var textBox = new clsJQuery.jqTextBox(
 				parameter + triggerSettings.UID+ triggerSettings.UniqueControllerId, "text", defaultText, Constants.EventsPage, defaultsize, true);
-			if(triggerSettings.ThresholdValue.HasValue)
-				textBox.defaultText = triggerSettings.ThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
-			return textBox.Build();
+					return textBox.Build();
 		}
 
 
@@ -190,18 +161,5 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		}
 
 
-		private string CreateTimePicker(TimeSpan? timeSpanChosen, string uid, string uniqueControllerId, string key)
-		{
-			var timePicker = new clsJQuery.jqTimeSpanPicker(key + uid + uniqueControllerId, "", Constants.EventsPage, true);
-			timePicker.showDays = false;
-			timePicker.showSeconds = false;
-			timePicker.defaultTimeSpan = new TimeSpan(1, 0, 0);
-			if (timeSpanChosen.HasValue)
-			{
-				timePicker.defaultTimeSpan = timeSpanChosen.Value;
-			}
-
-			return timePicker.Build();
-		}
 	}
 }

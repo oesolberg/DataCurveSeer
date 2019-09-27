@@ -14,6 +14,6 @@ namespace DataCurveSeer.Common.Interfaces
     public interface IDataCurveComputationHandlerB
     {
         //bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc);
-        bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double thresholdValue);
+        bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double thresholdValue,int numberOfLastDataPoints);
     }
 }

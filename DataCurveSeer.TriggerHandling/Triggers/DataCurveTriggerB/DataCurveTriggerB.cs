@@ -22,8 +22,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		private IHSApplication _hs;
 		private IDataCurveComputationHandlerB _dataCurveComputationHandler;
 
-		public string GetTriggerName() => Utility.PluginName + ": A data curve of device values ...";
-		public int TriggerNumber { get; } = 1;
+		public string GetTriggerName() => Utility.PluginName + ": A threshold value has been reached and the curve is ...";
+		public int TriggerNumber { get; } = 2;
 		public int UID=>_triggerSettings?.UID ?? -1;
 		public int EvRef => _triggerSettings?.EvRef ?? -1;
 		public bool IsCondition => _isCondition;
@@ -123,12 +123,12 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 			if (_triggerSettings != null && _triggerSettings.GetTriggerConfigured())
             {
                 var thresholdValue = _triggerSettings.ThresholdValue;
-
+                var numberOfLastMeasurements = _triggerSettings.NumberOfLastMeasurements;
 				var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, SystemDateTime.Now().AddHours(-3),
 					SystemDateTime.Now());
 				_logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler==null}");
 
-				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending,thresholdValue.Value);
+				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending,thresholdValue.Value, numberOfLastMeasurements.Value);
 			}
 			return false;
 		}
@@ -217,14 +217,13 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
             if(_triggerSettings.ThresholdValue.HasValue)
                 thresholdValue=_triggerSettings.ThresholdValue.Value.ToString();
 
-			//var futureSettings = string.Empty;
-			//if (_triggerSettings.UseFutureComputation && _triggerSettings.FutureThresholdValue.HasValue &&
-			//    _triggerSettings.FutureComputationTimeSpan.HasValue)
-			//{
-			//	var futureTimeSpan = GetTimespanInfoString(_triggerSettings.FutureComputationTimeSpan);
-			//	futureSettings = $"and the computed value reaches {_triggerSettings.FutureThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"))} within {futureTimeSpan}";
-			//}
-			return $" The threshold value {thresholdValue} has been reached and the slope of the data curve of device values for the device {deviceInfo} has {ascDescCurve} curve";
+            var numberOfLastMeasurements = "";
+            if (_triggerSettings.NumberOfLastMeasurements.HasValue)
+            {
+                numberOfLastMeasurements = _triggerSettings.NumberOfLastMeasurements.Value.ToString();
+            }
+			return $" The threshold value of {thresholdValue} has been reached for the device <font class=\"event_Txt_Option\">{deviceInfo}</font> " +
+                   $"and it has had {ascDescCurve} slope for its {numberOfLastMeasurements} last measurements";
 		}
 
 		private bool ChangeValueTrigger(int evRef)
@@ -347,6 +346,12 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 					{
 						triggerSettings.ThresholdValue = ParameterExtraction.GetDoubleOrNull(formattedAction[dataKey]);
 					}
+
+                    if (dataKey.Contains(Constants.NumberOfLastMeasurementsKey))
+                    {
+                        triggerSettings.NumberOfLastMeasurements =
+                            ParameterExtraction.GetIntOrNullFromObject(formattedAction[dataKey]);
+                    }
 				}
 
 				_triggerSettings = triggerSettings;

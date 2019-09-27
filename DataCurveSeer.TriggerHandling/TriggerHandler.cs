@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
 using DataCurveSeer.TriggerHandling.Triggers;
+using DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB;
 using HomeSeerAPI;
 
 namespace DataCurveSeer.TriggerHandling
@@ -59,7 +60,8 @@ namespace DataCurveSeer.TriggerHandling
 		private List<ITrigger> CreateTriggerTypes()
 		{
 			var triggers = new List<ITrigger>();
-			triggers.Add(new DataCurveTrigger(_hs,_logging,_collectionFactory,_homeSeerHandler));
+            triggers.Add(new DataCurveTrigger(_hs, _logging, _collectionFactory, _homeSeerHandler));
+            triggers.Add(new DataCurveTriggerB(_hs, _logging, _collectionFactory, _homeSeerHandler));
 			return triggers;
 		}
 

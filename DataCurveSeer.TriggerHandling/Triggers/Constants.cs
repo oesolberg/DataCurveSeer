@@ -13,5 +13,6 @@
 		public static string FutureTimeSpanKey = "TimespanToReachThreshold_";
 		public static string  CheckIfUseFutureComputationKey = "CheckIfUseFutureComputation_";
 		public const string EventsPage = "events";
-	}
+        public static string NumberOfLastMeasurementsKey = "NumberOfLastMeasurements_";
+    }
 }

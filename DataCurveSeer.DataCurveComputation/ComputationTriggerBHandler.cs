@@ -18,7 +18,7 @@ namespace DataCurveSeer.DataCurveComputation
             _logging = logging;
         }
 
-        public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double thresholdValue)
+        public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double thresholdValue, int numberOfLastMeasurements)
         {
             if (dataPoints == null)
             {
@@ -26,32 +26,52 @@ namespace DataCurveSeer.DataCurveComputation
                 return false;
             }
 
-            if (dataPoints.Count < 10)
+            if (dataPoints.Count < numberOfLastMeasurements)
             {
                 _logging.LogDebug($"Too few datapoints: {dataPoints.Count}");
                 return false;
             }
 
+            //Get last data point
+            var lastDataPoint = dataPoints.OrderBy(x=>x.DateTimeOfMeasurment).Last();
 
-            var lastDateTime = dataPoints.Max(x => x.DateTimeOfMeasurment);
-            var lastDataPoint = dataPoints.First(x => x.DateTimeOfMeasurment == lastDateTime);
+            //Check if we have reached threshold. If not return false
+            if (!ThresholdReached(ascDesc, lastDataPoint.Value, thresholdValue))
+                return false;
 
-            var tenLastDataPoints = dataPoints.OrderBy(x => x.DateTimeOfMeasurment).Take(10).ToList();
+            var resultSetComputedLinearData = CreateLinearDataSet(dataPoints,numberOfLastMeasurements);
 
-            var fitLineHandler = new FitLineHandler();
-            var resultSetComputedLinearData = fitLineHandler.ComputeLinearData(tenLastDataPoints);
+            return CheckResultData(ascDesc, resultSetComputedLinearData);
 
+        }
 
-            if (ascDesc == AscDescEnum.Descending && lastDataPoint.Value < thresholdValue &&
-                resultSetComputedLinearData.IsDescending)
+        private bool CheckResultData(AscDescEnum ascDesc, ComputedResultSetFitLine resultSetComputedLinearData)
+        {
+            if (ascDesc == AscDescEnum.Descending && resultSetComputedLinearData.IsDescending)
                 return true;
 
-            if (ascDesc == AscDescEnum.Ascending && lastDataPoint.Value > thresholdValue &&
-                resultSetComputedLinearData.IsAscending)
+            if (ascDesc == AscDescEnum.Ascending && resultSetComputedLinearData.IsAscending)
                 return true;
-
 
             return false;
+        }
+
+        private ComputedResultSetFitLine CreateLinearDataSet(List<DeviceValue> dataPoints,int numberOfLastMeasurements)
+        {
+            var lastDataPoints = dataPoints.OrderBy(x => x.DateTimeOfMeasurment).Take(numberOfLastMeasurements).ToList();
+            var fitLineHandler = new FitLineHandler();
+                return fitLineHandler.ComputeLinearData(lastDataPoints);
+        }
+
+        private bool ThresholdReached(AscDescEnum ascDesc, double currentValue, double thresholdValue)
+        {
+            if (ascDesc == AscDescEnum.Descending && currentValue > thresholdValue)
+                return false;
+
+            if (ascDesc == AscDescEnum.Ascending && currentValue < thresholdValue)
+                return false;
+
+            return true;
         }
     }
 }
