@@ -100,7 +100,9 @@ namespace DataCurveSeer.Common
 			}
 		}
 
-		private void SaveLoglevel()
+        public int DaysOfDataStorage { get; set; }
+
+        private void SaveLoglevel()
 		{
 
 			var loglevelToSave = Enum.GetName(typeof(LogLevel), _logLevel);

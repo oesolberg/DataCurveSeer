@@ -20,17 +20,17 @@ namespace DataCurveSeer.DataCurveComputation
 
         public bool TriggerTrue(List<DeviceValue> dataPoints, AscDescEnum ascDesc, double thresholdValue, int numberOfLastMeasurements)
         {
-            if (dataPoints == null)
+            if (dataPoints == null || dataPoints.Count<2)
             {
-                _logging.LogDebug("Datapoints is null");
+                _logging.LogDebug("Datapoints is null or has not minimum number of items (2) for finding curve");
                 return false;
             }
 
-            if (dataPoints.Count < numberOfLastMeasurements)
-            {
-                _logging.LogDebug($"Too few datapoints: {dataPoints.Count}");
-                return false;
-            }
+            //if (dataPoints.Count < numberOfLastMeasurements)
+            //{
+            //    _logging.LogDebug($"Too few datapoints compared to set value in trigger: Number of data points: {dataPoints.Count}, number of data points to use: {numberOfLastMeasurements}");
+            //    return false;
+            //}
 
             //Get last data point
             var lastDataPoint = dataPoints.OrderBy(x=>x.DateTimeOfMeasurment).Last();

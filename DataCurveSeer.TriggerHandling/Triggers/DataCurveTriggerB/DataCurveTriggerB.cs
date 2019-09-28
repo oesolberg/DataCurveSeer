@@ -205,12 +205,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 			var infoInHeader = string.Empty;
 			if (!_isCondition)
 				return "This can never be a trigger, only a condition";
-			//if (!ChangeValueTrigger(actionInfo.evRef))
-			//{
-			//	infoInHeader=
-			//		"The initial trigger needs to be of type 'This device just had its value set or changed' or 'This device has a value that just changed:' to collect data properly<br/>";
-			//}
-			_triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
+
+            _triggerSettings = GetSettingsFromTriggerInfo(actionInfo);
 			var deviceInfo = GetDeviceInfoString();
 			var ascDescCurve = GetAscendingDescendingCurveInfoString();
             var thresholdValue = "";
@@ -223,7 +219,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
                 numberOfLastMeasurements = _triggerSettings.NumberOfLastMeasurements.Value.ToString();
             }
 			return $" The threshold value of {thresholdValue} has been reached for the device <font class=\"event_Txt_Option\">{deviceInfo}</font> " +
-                   $"and it has had {ascDescCurve} slope for its {numberOfLastMeasurements} last measurements";
+                   $"and it has had {ascDescCurve} slope for the {numberOfLastMeasurements} last measurements";
 		}
 
 		private bool ChangeValueTrigger(int evRef)

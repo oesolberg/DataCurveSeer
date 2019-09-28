@@ -26,7 +26,7 @@ namespace DataCurveSeer.Config
 		private const string DoAuthMsKey = "AuthMsInputKey";
 		private const string LogLevelKey = "LogLevel";
 		private const string CalendarCheckIntervalKey = "CalendarCheckInterval";
-		private const string TriggerCheckIntervalKey = "TriggerCheckInterval";
+		private const string DaysOfDataStorageKey = "DaysOfDataStorage_";
 		private const string UseCalendarKey = "checkUse_";
 		private const string UseMsCalendarKey = "checkUseMsCal_";
 		private const string CheckCalendarButtonKey = "RefreshCalendar";
@@ -88,9 +88,9 @@ namespace DataCurveSeer.Config
 			returnString.Append("  <tr class='tableheader'><td width='250'>" + _pageNameText + "</td><td width='750'>" +
 								$"General settings for {Utility.PluginName}" + "</td></tr>");
 
-			//time between poll
-			//returnString.Append("  <tr class='tablerowodd'><td>Time between poll for data from heat pump:</td><td>" +
-			//					SetTimeTriggerChecks() + "</td></tr>");
+			//Number of days to keep data
+			returnString.Append("  <tr class='tableroweven'><td>Number of days to keep data for devices used in triggers:</td><td>" +
+								SetDaysOfStorage() + "</td></tr>");
 
 			//time between calendar checks
 			//returnString.Append("  <tr class='tableroweven'><td>Time between checks of calendars:</td><td>" +
@@ -120,20 +120,17 @@ namespace DataCurveSeer.Config
 			//return returnString.ToString();
 		}
 
-		//private string SetTimeTriggerChecks()
-		//{
-		//	var checkHeatPumpTimePicker = new clsJQuery.jqTimePicker(TriggerCheckIntervalKey, "", _pageName, false);
-		//	var currentCheckTriggerTimerInterval = _iniSettings.CheckHeatPumpTimerInterval;
-		//	var currentCheckHeatPumpTimeIntervalTimeSpan = new TimeSpan(0, 0, 0, currentCheckTriggerTimerInterval);
-		//	checkHeatPumpTimePicker.minutesSeconds = true;
-		//	checkHeatPumpTimePicker.defaultValue =
-		//		$"{currentCheckHeatPumpTimeIntervalTimeSpan.Minutes.ToString("00")}:{currentCheckHeatPumpTimeIntervalTimeSpan.Seconds.ToString("00")}";
-		//	return checkHeatPumpTimePicker.Build();
-
-		//}
+        private string SetDaysOfStorage()
+        {
+            var textBoxDaysOfDataStorage= new clsJQuery.jqTextBox(DaysOfDataStorageKey,"text", "", _pageName,5, false);
+            var currentDaysOfDataStorage = _iniSettings.DaysOfDataStorage;
+            if(currentDaysOfDataStorage>0)
+                textBoxDaysOfDataStorage.defaultText = currentDaysOfDataStorage.ToString();
+            return textBoxDaysOfDataStorage.Build();
+        }
 
 
-		private string SetLogLevelUserInterface()
+        private string SetLogLevelUserInterface()
 		{
 			var logLevelDropdown = new clsJQuery.jqDropList(LogLevelKey, _pageName, false);
 			logLevelDropdown.items = new List<Pair>()
@@ -192,9 +189,9 @@ namespace DataCurveSeer.Config
 			{
 				HandleCalendarCheckIntervalChange(dicQueryString);
 			}
-			else if (dicQueryString.ContainsKey(TriggerCheckIntervalKey))
+			else if (dicQueryString.ContainsKey(DaysOfDataStorageKey))
 			{
-				//HandleTriggerCheckIntervalChange(dicQueryString);
+                HandleDaysOfDataStorageChange(dicQueryString);
 			}
 			else if (dicQueryString.ContainsKey(CodeKey))
 			{
@@ -209,7 +206,12 @@ namespace DataCurveSeer.Config
 
 		}
 
-		private void HandleInputOfCodeKey(Dictionary<string, string> dicQueryString)
+        private void HandleDaysOfDataStorageChange(Dictionary<string, string> dicQueryString)
+        {
+            //Get and store the number of days to store data. Minimum=1
+        }
+
+        private void HandleInputOfCodeKey(Dictionary<string, string> dicQueryString)
 		{
 			_googleCode = HttpUtility.UrlDecode(dicQueryString[CodeKey]);
 		}
@@ -242,7 +244,7 @@ namespace DataCurveSeer.Config
 
 		//private void HandleTriggerCheckIntervalChange(Dictionary<string, string> dicQuerystring)
 		//{
-		//	var timeString = dicQuerystring[TriggerCheckIntervalKey];
+		//	var timeString = dicQuerystring[DaysOfDataStorageKey];
 		//	var timespan = GetTimespanFromTimestring(timeString);
 		//	_iniSettings.CheckHeatPumpTimerInterval = (int)timespan.TotalSeconds;
 		//}

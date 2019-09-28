@@ -12,5 +12,6 @@ namespace DataCurveSeer.Common.Interfaces
 		event IniSettingsChangedEventHandler IniSettingsChanged;
 
 		LogLevel LogLevel { get; set; }
-	}
+        int DaysOfDataStorage { get; set; }
+    }
 }

@@ -66,7 +66,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 
             var numberOfMeasurementsTextBox = CreateJqTextBox(Constants.NumberOfLastMeasurementsKey, numberOfLastDataPointsText, triggerSettings, 5);
 
-            sb.AppendLine($"<tr><td>The threshold value of {thresholdValueTextbox } has been reached for the device {floorDropDown} {roomDropdown}  {deviceDropdown} and it has had {ascendingDescendingDropdown} curve for its {numberOfMeasurementsTextBox} last measurements</td></tr>");
+            sb.AppendLine($"<tr><td>The threshold value of {thresholdValueTextbox } has been reached for the device {floorDropDown} {roomDropdown}  {deviceDropdown} and it has had {ascendingDescendingDropdown} curve for the {numberOfMeasurementsTextBox} last measurements</td></tr>");
 			//Future computation ui
 			//sb.AppendLine(CreateChoicesForFutureComputation(triggerSettings));
 			sb.AppendLine("</table>");
