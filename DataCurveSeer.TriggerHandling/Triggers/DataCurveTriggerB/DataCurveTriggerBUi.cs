@@ -20,8 +20,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 	{
 
 
-		private IHomeSeerHandler _homeSeerHandler;
-		private FloorsRoomsAndDevices _floorsRomsAndDevices;
+		private readonly IHomeSeerHandler _homeSeerHandler;
+		private FloorsRoomsAndDevices _floorsRoomsAndDevices;
 		private IHSApplication _hs;
 
 		public DataCurveTriggerBUi(IHomeSeerHandler homeSeerHandler, IHSApplication hs)
@@ -33,7 +33,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 
 		private void PopulateWithHomeSeerData()
 		{
-			_floorsRomsAndDevices = _homeSeerHandler.GetFloorsRoomsAndDevices();
+			_floorsRoomsAndDevices = _homeSeerHandler.GetFloorsRoomsAndDevices();
 		}
 
 		public string Build(DataCurveTriggerBSettings triggerSettings, IHomeSeerHandler homeSeerHandler = null)
@@ -43,11 +43,11 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 
 			var floorDropDown = CreateFloorDropdown(triggerSettings.FloorChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
 			var roomDropdown = CreateRoomDropdown(triggerSettings.RoomChosen, triggerSettings.UidString, triggerSettings.UniqueControllerId);
-			if (!_floorsRomsAndDevices.RoomExists(triggerSettings.RoomChosen))
+			if (!_floorsRoomsAndDevices.RoomExists(triggerSettings.RoomChosen))
 			{
 				triggerSettings.RoomChosen = "";
 			}
-			if (!_floorsRomsAndDevices.FloorExists(triggerSettings.FloorChosen))
+			if (!_floorsRoomsAndDevices.FloorExists(triggerSettings.FloorChosen))
 			{
 				triggerSettings.FloorChosen = "";
 			}
@@ -58,17 +58,15 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
             if (triggerSettings.ThresholdValue.HasValue)
                 thresholdDefaultText = triggerSettings.ThresholdValue.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
 
-            var thresholdValueTextbox = CreateJqTextBox(Constants.ThresholdValueKey, thresholdDefaultText, triggerSettings, 5);
+            var thresholdValueTextbox = CreateJqTextBox(Constants.ThresholdValueKey, thresholdDefaultText, triggerSettings, 3);
 
             var numberOfLastDataPointsText = "";
             if (triggerSettings.NumberOfLastMeasurements.HasValue)
                 numberOfLastDataPointsText = triggerSettings.NumberOfLastMeasurements.Value.ToString(CultureInfo.CreateSpecificCulture("en-US"));
 
-            var numberOfMeasurementsTextBox = CreateJqTextBox(Constants.NumberOfLastMeasurementsKey, numberOfLastDataPointsText, triggerSettings, 5);
+            var numberOfMeasurementsTextBox = CreateJqTextBox(Constants.NumberOfLastMeasurementsKey, numberOfLastDataPointsText, triggerSettings, 3);
 
             sb.AppendLine($"<tr><td>The threshold value of {thresholdValueTextbox } has been reached for the device {floorDropDown} {roomDropdown}  {deviceDropdown} and it has had {ascendingDescendingDropdown} curve for the {numberOfMeasurementsTextBox} last measurements</td></tr>");
-			//Future computation ui
-			//sb.AppendLine(CreateChoicesForFutureComputation(triggerSettings));
 			sb.AppendLine("</table>");
 			return sb.ToString();
 		}
@@ -78,7 +76,8 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		{
 			var textBox = new clsJQuery.jqTextBox(
 				parameter + triggerSettings.UID+ triggerSettings.UniqueControllerId, "text", defaultText, Constants.EventsPage, defaultsize, true);
-					return textBox.Build();
+            textBox.left = 1;		
+            return textBox.Build();
 		}
 
 
@@ -100,14 +99,14 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 
 		private string CreateFloorDropdown(string chosenFloor, string uid, string uniqueControllerId)
 		{
-			var dropDown = CreateDropDown(Constants.FloorKey, chosenFloor, _floorsRomsAndDevices.Floors, uid,
+			var dropDown = CreateDropDown(Constants.FloorKey, chosenFloor, _floorsRoomsAndDevices.Floors, uid,
 				uniqueControllerId);
 			return dropDown.Build();
 		}
 
 		private string CreateRoomDropdown(string chosenRoom, string uid, string uniqueControllerId)
 		{
-			var dropDown = CreateDropDown(Constants.RoomKey, chosenRoom, _floorsRomsAndDevices.Rooms, uid,
+			var dropDown = CreateDropDown(Constants.RoomKey, chosenRoom, _floorsRoomsAndDevices.Rooms, uid,
 				uniqueControllerId);
 			return dropDown.Build();
 		}
@@ -115,7 +114,7 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
 		private string CreateDeviceDropdown(string floorChosen, string roomChosen, int? deviceId, string uid, string uniqueControllerId)
 		{
 			string deviceDropDownParameter = Constants.DeviceDropdownKey;
-			var devicesFromFloorAndRoom = _floorsRomsAndDevices.GetDevices(floorChosen, roomChosen);
+			var devicesFromFloorAndRoom = _floorsRoomsAndDevices.GetDevices(floorChosen, roomChosen);
 			var chosenDevice = -1;
 			var noSelectionMade = false;
 			if (deviceId.HasValue)

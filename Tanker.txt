@@ -1,5 +1,7 @@
 CurveStat
 
+Kunne vise feilmelding hvis man 
+
 //Siste oppgave
 Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dager gamle? Setting for dette med default 2 dager. Starte opprensingstråd ca 1 gang i døgnet fast klokkeslett 30 min før og 30 min etter klokkeslett. Også lagre ned i databasen sist man fikk kjørt en komprimering/sletting. Her må vi kunne låse håndteringen og ha den i egen tråd.
 

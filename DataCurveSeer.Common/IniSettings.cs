@@ -4,137 +4,116 @@ using HomeSeerAPI;
 
 namespace DataCurveSeer.Common
 {
-	public class IniSettings : IIniSettings, IDisposable
-	{
-		private readonly string ConfigSection = "CONFIG";
+    public class IniSettings : IIniSettings, IDisposable
+    {
+        private readonly string ConfigSection = "CONFIG";
 
-		public const string LogLevelKey = "LOGLEVEL";
+        public const string LogLevelKey = "LOGLEVEL";
+        public const string DaysOfDataStorageKey = "DAYSOFDATASTORAGE";
 
+        private bool _disposed;
+        private readonly IHSApplication _hs;
+        private LogLevel _logLevel;
+        private int _daysOfDataStorage;
 
-		private bool _disposed;
-		private readonly IHSApplication _hs;
-		private LogLevel _logLevel;
+        public IniSettings(IHSApplication hs)
+        {
+            _hs = hs;
+        }
 
-		public IniSettings(IHSApplication hs)
-		{
-			_hs = hs;
-		}
+        public void LoadSettingsFromIniFile()
+        {
+            _logLevel = GetLogLevel();
+            _daysOfDataStorage = GetNumberOfDaysOfDataStorage();
+        }
 
-		public void LoadSettingsFromIniFile()
-		{
-			_logLevel = GetLogLevel();
+        private int GetNumberOfDaysOfDataStorage()
+        {
 
+            var numberOfDaysToStoreDataString = _hs.GetINISetting(ConfigSection, DaysOfDataStorageKey, "2", Utility.IniFile);
+            int numberOfDaysToStoreData;
+            if (int.TryParse(numberOfDaysToStoreDataString, out numberOfDaysToStoreData))
+            {
+                return numberOfDaysToStoreData;
+            }
+            return 2;
+        }
 
-			//_gcalendarHashItems = new Dictionary<int, string>();
-			//var tempGcalendarItems = _hs.GetINISectionEx(GCalendarItemsSection, Utility.Inifile).ToList();
-			//CreateCalendarItemHashList(tempGcalendarItems, _gcalendarHashItems);
+        public void SaveSettingsToIniFile()
+        {
+        }
 
-			//_gcalendarIdItems = new Dictionary<int, string>();
-			//tempGcalendarItems = _hs.GetINISectionEx(GCalendarIdItemsSection, Utility.Inifile).ToList();
-			//CreateCalendarItemIdDictionary(tempGcalendarItems, _gcalendarIdItems);
+        private LogLevel GetLogLevel()
+        {
+            var debugLevelAsString = _hs.GetINISetting(ConfigSection, LogLevelKey, "NONE", Utility.IniFile);
+            LogLevel logLevelToReturn;
+            if (!Enum.TryParse(debugLevelAsString, true, out logLevelToReturn))
+            {
+                logLevelToReturn = LogLevel.Normal;
+            }
+            return logLevelToReturn;
+        }
 
-			//_mscalendarHashItems = new Dictionary<int, string>();
-			//var tempMsCalendarItems = _hs.GetINISectionEx(MsCalendarItemsSection, Utility.Inifile).ToList();
-			//CreateCalendarItemHashList(tempMsCalendarItems, _mscalendarHashItems);
+        public LogLevel LogLevel
+        {
+            get => _logLevel;
+            set
+            {
+                _logLevel = value;
+                SaveLoglevel();
+                OnIniSettingsChanged();
+            }
+        }
 
-			//_msCalendarIdItems = new Dictionary<int, string>();
-			//tempMsCalendarItems = _hs.GetINISectionEx(MsCalendarIdItemsSection, Utility.Inifile).ToList();
-			//CreateCalendarItemIdDictionary(tempMsCalendarItems, _msCalendarIdItems);
+        public int DaysOfDataStorage
+        {
+            get => _daysOfDataStorage;
+            set
+            {
+                _daysOfDataStorage = value;
+                SaveDaysOfDataStorage();
+            }
+        }
 
-			
-			//_msAppId = GetMsAppId();
-			//_msAppPassword = GetMsAppPassword();
-			//_msRedirectUri = GetMsRedirectUri();
-			//_calendarCheckInterval = GetCalendarCheckInterval();
-			//_checkTriggerTimerInterval = GetCheckTriggerTimerInterval();
-		}
-
-		public void SaveSettingsToIniFile()
-		{
-			//_hs.ClearINISection(MsCalendarItemsSection, Utility.Inifile);
-			//_mscalendarHashItems = new Dictionary<int, string>();
-			//foreach (var msCalendarItem in calendarListToSave)
-			//{
-			//	if (msCalendarItem.IsChecked)
-			//	{
-			//		_hs.SaveINISetting(MsCalendarItemsSection, msCalendarItem.Calendar.CalendarId.GetHashCode().ToString(), msCalendarItem.Calendar.CalendarName, Utility.Inifile);
-			//		_mscalendarHashItems.Add(msCalendarItem.Calendar.CalendarId.GetHashCode(), msCalendarItem.Calendar.CalendarName);
-			//	}
-			//}
-			////Store the calendarIds as well
-
-			//_hs.ClearINISection(MsCalendarIdItemsSection, Utility.Inifile);
-			//_msCalendarIdItems = new Dictionary<int, string>();
-			//foreach (var msCalendarItem in calendarListToSave)
-			//{
-			//	if (msCalendarItem.IsChecked)
-			//	{
-			//		_hs.SaveINISetting(MsCalendarIdItemsSection, msCalendarItem.Calendar.CalendarId.GetHashCode().ToString(), msCalendarItem.Calendar.CalendarId, Utility.Inifile);
-			//		_msCalendarIdItems.Add(msCalendarItem.Calendar.CalendarId.GetHashCode(), msCalendarItem.Calendar.CalendarId);
-			//	}
-			//}
-			////Warn about changed inisettings
-			//OnIniSettingsChanged();
-
-		}
-
-		private LogLevel GetLogLevel()
-		{
-			var debugLevelAsString = _hs.GetINISetting(ConfigSection, LogLevelKey, "NONE", Utility.IniFile);
-			LogLevel logLevelToReturn;
-			if (!Enum.TryParse(debugLevelAsString, true, out logLevelToReturn))
-			{
-				logLevelToReturn = LogLevel.Normal;
-			}
-			return logLevelToReturn;
-		}
-
-		public LogLevel LogLevel
-		{
-			get => _logLevel;
-			set
-			{
-				_logLevel = value;
-				SaveLoglevel();
-				OnIniSettingsChanged();
-			}
-		}
-
-        public int DaysOfDataStorage { get; set; }
+        private void SaveDaysOfDataStorage()
+        {
+            _hs.SaveINISetting(ConfigSection, DaysOfDataStorageKey, _daysOfDataStorage.ToString(), Utility.IniFile);
+            //OnIniSettingsChanged();
+        }
 
         private void SaveLoglevel()
-		{
+        {
 
-			var loglevelToSave = Enum.GetName(typeof(LogLevel), _logLevel);
+            var loglevelToSave = Enum.GetName(typeof(LogLevel), _logLevel);
 
-			_hs.SaveINISetting(ConfigSection, LogLevelKey, loglevelToSave, Utility.IniFile);
-			//OnIniSettingsChanged();
-		}
+            _hs.SaveINISetting(ConfigSection, LogLevelKey, loglevelToSave, Utility.IniFile);
+            //OnIniSettingsChanged();
+        }
 
-		public event IniSettingsChangedEventHandler IniSettingsChanged;
+        public event IniSettingsChangedEventHandler IniSettingsChanged;
 
 
-		protected virtual void OnIniSettingsChanged()
-		{
-			IniSettingsChanged?.Invoke(this, EventArgs.Empty);
-		}
+        protected virtual void OnIniSettingsChanged()
+        {
+            IniSettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
 
-			// Use SupressFinalize in case a subclass 
-			// of this type implements a finalizer.
-			GC.SuppressFinalize(this);
-		}
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!_disposed)
-			{
-				// Indicate that the instance has been disposed.
-				_disposed = true;
-			}
-		}
-	}
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                // Indicate that the instance has been disposed.
+                _disposed = true;
+            }
+        }
+    }
 }
