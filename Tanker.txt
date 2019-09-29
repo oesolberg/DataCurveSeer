@@ -1,6 +1,8 @@
 CurveStat
 
-Kunne vise feilmelding hvis man 
+Kunne vise feilmelding hvis man legger inn noe feil i trigger. 
+
+Gjøre om fra to triggere til en trigger med to subtriggere
 
 //Siste oppgave
 Vi må rense opp i databasen når data er over xx minutter gamle? Eller 2-3 dager gamle? Setting for dette med default 2 dager. Starte opprensingstråd ca 1 gang i døgnet fast klokkeslett 30 min før og 30 min etter klokkeslett. Også lagre ned i databasen sist man fikk kjørt en komprimering/sletting. Her må vi kunne låse håndteringen og ha den i egen tråd.
@@ -11,6 +13,11 @@ Litt stats på antall events mottatt og antall events som førte til endringer i
 DONE?//Legge oppstart i egen tråd siden det nå tar laaaang tid å starte opp.
 
 //Lage en eller annen queue for sjekk av triggere og la ting ligge der i x antall sekunder før man retrigger. Hvis det kommer nye forespørsler på kø så venter man enda noen sekunder. Dette for å ikke hamre på HomeSeer når det gjøres ting med en trigger. Vi trenger egentlig bare å oppdatere når man er ferdig med å justere. Ventetid 60 sekunder?
+
+
+
+
+
 
 DONE //Etter fiksing av storage
 Få til noe som prøver å beregne kurve når det er triggerTrue. 
