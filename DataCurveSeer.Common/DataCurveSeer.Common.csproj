@@ -86,6 +86,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AscDescEnum.cs" />
+    <Compile Include="Repository\StorageMaintenance.cs" />
     <Compile Include="SystemDateTime.cs" />
     <Compile Include="DelegateDummy.cs" />
     <Compile Include="FloorsRoomsAndDevices.cs" />

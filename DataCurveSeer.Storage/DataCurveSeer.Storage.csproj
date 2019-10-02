@@ -7,7 +7,7 @@
     <ProjectGuid>{261C7A4B-3FE6-4D30-8D9E-DF187701312F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataCurve.Storage</RootNamespace>
+    <RootNamespace>DataCurveSeer.Storage</RootNamespace>
     <AssemblyName>DataCurve.Storage</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

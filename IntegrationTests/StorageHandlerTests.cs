@@ -16,18 +16,19 @@ namespace IntegrationTests
     public class StorageHandlerTests
     {
 	    private ILogging _logging;
-
-		[SetUp]
+        private IIniSettings _iniSettings;
+        [SetUp]
 	    public void SetUp()
 	    {
 		    _logging = NSubstitute.Substitute.For<ILogging>();
+            _iniSettings = NSubstitute.Substitute.For<IIniSettings>();
 
-	    }
+        }
 	    [Test]
 	    public void GetValuesForDevice_ShouldReturnCreatedValues()
 	    {
 		    var deviceId = 666;
-		    var sut=new StorageHandler(_logging);
+		    var sut=new StorageHandler(_logging,_iniSettings);
 		    CreateACoupleOfPoints(sut, deviceId);
 
 		    var result = sut.GetValuesForDevice(deviceId, new DateTime(2000, 1, 1), new DateTime(2000, 1, 1, 1, 0, 0));
@@ -64,7 +65,7 @@ namespace IntegrationTests
 			    path = path.Substring(6);
 		    }
 			var dbPath= Path.Combine(path, "DataCurveSeer.db");
-			var storageHandler = new StorageHandler(_logging,dbPath);
+			var storageHandler = new StorageHandler(_logging,_iniSettings,dbPath);
 
 			var result = storageHandler.GetValuesForDevice(deviceId, new DateTime(2019, 9, 12), new DateTime(2019, 9, 12, 1, 0, 0));
 			var sut = new DataCurveComputationHandler(_logging);
