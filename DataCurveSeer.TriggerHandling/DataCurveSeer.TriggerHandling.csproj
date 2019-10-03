@@ -54,6 +54,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="RefetchThreadQueue.cs" />
     <Compile Include="ReformatCopiedAction.cs" />
     <Compile Include="TriggerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

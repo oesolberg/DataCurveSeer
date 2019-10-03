@@ -15,8 +15,9 @@ namespace DataCurveSeer.TriggerHandling
 {
 
 	public class TriggerHandler : ITriggerHandler, IDisposable
-	{
-		private IHSApplication _hs;
+    {
+        private static Object _lockObject = new Object();
+        private IHSApplication _hs;
 		private readonly IAppCallbackAPI _callback;
 		private IIniSettings _iniSettings;
 		private ILogging _logging;
@@ -68,6 +69,7 @@ namespace DataCurveSeer.TriggerHandling
 
 		private void GetPluginTriggersFromHomeSeer()
 		{
+            //Todo: Get Triggers should be added to some kind of queue?
 			var triggersInPlugin = _callback.GetTriggers(Utility.PluginName);
 			if (triggersInPlugin != null & triggersInPlugin.Length > 0)
 				CreateExistingTriggers(triggersInPlugin);

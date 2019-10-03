@@ -52,8 +52,6 @@ namespace DataCurveSeer.Storage
 
         public void AddDeviceValueToDatabase(double value, DateTime dateTimeOfMeasurement, int referenceId)
         {
-            //lock (_lockObject)
-            //{
             using (var db = new LiteDatabase(_pathToRepo))
             {
                 var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
@@ -87,17 +85,18 @@ namespace DataCurveSeer.Storage
                 }
 
             }
-            //}
         }
 
         private void DeleteAllValuesOlderThanSetNumberOfDays(LiteDatabase db)
         {
+            
             var deviceValues = db.GetCollection<DeviceValue>();
-            var deviceIds = deviceValues.FindAll().Select(x => x.DeviceId).Distinct();
-            foreach (var deviceId in deviceIds)
-            {
-                //db.Delete<Product>(x => x.Price == 100);
-            }
+            //var deviceIds = deviceValues.FindAll().Select(x => x.DeviceId).Distinct();
+            var daysToGoBack=_iniSettings.DaysOfDataStorage;
+            var minimunDate = SystemDateTime.Now().Date.AddDays(daysToGoBack * -1);
+            deviceValues.Delete(Query.LT("DateTimeOfMeasurment", minimunDate));
+            db.Shrink();
+
         }
 
 

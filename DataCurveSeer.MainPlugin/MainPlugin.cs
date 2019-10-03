@@ -55,7 +55,7 @@ namespace DataCurveSeer.MainPlugin
 			_homeSeerHandler = new HomeSeerHandler(_hs, _logging);
 			_logging.Log($"Done creating HomeSeerHandler");
 
-			_storageHandler = new StorageHandler(_logging);
+			_storageHandler = new StorageHandler(_logging,_iniSettings);
 			_logging.Log($"Done creating StorageHandler");
 
 			_triggerHandler = new TriggerHandler(_hs, _callback, _iniSettings, _logging, _collectionFactory, _homeSeerHandler,_storageHandler);
