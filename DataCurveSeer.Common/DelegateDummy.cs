@@ -21,6 +21,8 @@ namespace DataCurveSeer.Common
         {
             _triggersInPlugin = triggersInPlugin;
         }
+
+        public List<IPlugInAPI.strTrigActInfo> TriggersInPlugin => _triggersInPlugin;
     }
     public class DeviceIdEventArgs : EventArgs
 	{
