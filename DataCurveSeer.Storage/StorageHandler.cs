@@ -136,8 +136,10 @@ namespace DataCurveSeer.Storage
                     .Where(x => x.DeviceId == deviceId &&
                             x.DateTimeOfMeasurment >= startDateTime &&
                             x.DateTimeOfMeasurment <= endDateTime)
-
+                    .ToList()
+                    .OrderBy(x=>x.DateTimeOfMeasurment)
                     .ToList();
+
                 return foundValues;
             }
             //}

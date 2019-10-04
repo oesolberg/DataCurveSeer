@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
 using DataCurveSeer.DataCurveComputation;
@@ -126,11 +127,31 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
                 var numberOfLastMeasurements = _triggerSettings.NumberOfLastMeasurements;
                 var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, SystemDateTime.Now().AddHours(-3),
                     SystemDateTime.Now());
+                var lastValue = dataPoints.Last();
+                if (!ThresholdReached(lastValue.Value, thresholdValue, _triggerSettings.AscendingOrDescending))
+                    return false;
+
+
                 _logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler == null}");
 
                 return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending, thresholdValue.Value, numberOfLastMeasurements.Value);
             }
             return false;
+        }
+
+        private bool ThresholdReached(double lastValue, double? thresholdValue, AscDescEnum ascendingOrDescending)
+        {
+            if (!thresholdValue.HasValue) 
+                return false;
+
+            if (lastValue >= thresholdValue.Value && ascendingOrDescending == AscDescEnum.Ascending)
+                return true;
+            
+            if (lastValue <= thresholdValue.Value && ascendingOrDescending == AscDescEnum.Descending)
+                return true;
+
+            return false;
+
         }
 
         public IPlugInAPI.strMultiReturn TriggerProcessPostUi(NameValueCollection postData,
@@ -363,22 +384,5 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
             return null;
         }
 
-        //private TimeSpan? GetTimeSpanFromObject(object o)
-        //{
-        //	var timespanAsString = o as string;
-        //	if (o != null)
-        //	{
-        //		if (!string.IsNullOrEmpty(timespanAsString))
-        //		{
-        //			return ConvertTimespanStringToTimespanOrNull();
-        //		}
-        //	}
-        //	return null;
-        //}
-
-        //private TimeSpan? ConvertTimespanStringToTimespanOrNull()
-        //{
-        //	return null;
-        //}
     }
 }

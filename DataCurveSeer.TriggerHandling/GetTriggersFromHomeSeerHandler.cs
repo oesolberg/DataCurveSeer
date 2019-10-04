@@ -9,7 +9,7 @@ namespace DataCurveSeer.TriggerHandling
 {
     public interface IGetTriggersFromHomeSeerHandler
     {
-        void DelayFetching(int? delayInSeconds=null);
+        void DelayFetching(int? delayInSeconds = null);
         event TriggerDataReadyEventHandler TriggerDataReady;
         void StopWork();
         void StartWork();
@@ -26,7 +26,7 @@ namespace DataCurveSeer.TriggerHandling
         private DateTime _timeForFetching;
         private Thread _workThread;
         private readonly IAppCallbackAPI _callback;
-        private readonly int _delayInSeconds = 100;
+        private readonly int _delayInSeconds = 60;
         private bool _isRunning;
 
         public bool IsRunning => _isRunning;
@@ -42,7 +42,7 @@ namespace DataCurveSeer.TriggerHandling
             }
         }
         //Should only exist as long as we have a Queue with refetch to be done
-        public void DelayFetching(int? delayInSeconds=null)
+        public void DelayFetching(int? delayInSeconds = null)
         {
             if (delayInSeconds.HasValue)
             {
@@ -82,7 +82,6 @@ namespace DataCurveSeer.TriggerHandling
                     {
                         OnTriggerDataReady(triggersInPlugin);
                     }
-
                     _stopRunning = true;
                 }
             } while (!_stopRunning);
