@@ -28,8 +28,8 @@ namespace DataCurveSeer.TriggerHandling
 		private IHomeSeerHandler _homeSeerHandler;
 		private List<int> _watchedEventDeviceIds = new List<int>();
 		private IStorageHandler _storageHandler;
-
-		protected internal const string TriggerTypeKey = "TriggerType";
+        private IGetTriggersFromHomeSeerHandler _triggersFromHomeSeerHandler;
+        protected internal const string TriggerTypeKey = "TriggerType";
 
 		public TriggerHandler(IHSApplication hs, IAppCallbackAPI callback, IIniSettings iniSettings, 
 			ILogging logging, IHsCollectionFactory collectionFactory,IHomeSeerHandler homeSeerHandler, IStorageHandler storageHandler)
@@ -220,6 +220,15 @@ namespace DataCurveSeer.TriggerHandling
 
 		private void WaitAndRefetchTriggers()
 		{
+            if (_triggersFromHomeSeerHandler != null)
+            {
+                _triggersFromHomeSeerHandler.DelayFetching();
+            }
+            else
+            {
+                _triggersFromHomeSeerHandler=new GetTriggersFromHomeSeerHandler(_iniSettings,_logging,_callback);
+                _triggersFromHomeSeerHandler.StartWork();
+            }
 			//Wait 0.5 seconds to do updates. Hope it is enough time for HomeSeer to get everything done.
 			Thread.Sleep(500);
 			ReFetchTriggers();
@@ -228,6 +237,7 @@ namespace DataCurveSeer.TriggerHandling
 
 		private void ReFetchTriggers()
 		{
+
 			var triggersInPlugin = _callback.GetTriggers(Utility.PluginName);
 			//Remove all watched event device Ids
 			if (_watchedEventDeviceIds.Count > 0)
@@ -307,8 +317,18 @@ namespace DataCurveSeer.TriggerHandling
 		{
 			if (!_disposed)
 			{
-				// Indicate that the instance has been disposed.
-				_disposed = true;
+                // Indicate that the instance has been disposed.
+
+                if (_triggersFromHomeSeerHandler != null)
+                {
+                    //_triggersFromHomeSeerHandler.StopWork();
+                    //_parser.UnsubscribeToEventFromGivenWorker(rfLinkWorker);
+                    ////rfLinkWorker.RfLinkDataReady -= ParserOnRfLinkParsedDataReady;
+                    //rfLinkWorker.Dispose();
+
+                }
+
+                _disposed = true;
 			}
 		}
 	}
