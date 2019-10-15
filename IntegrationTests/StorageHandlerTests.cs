@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataCurveSeer.Common;
 using DataCurveSeer.Common.Interfaces;
 using DataCurveSeer.DataCurveComputation;
 using NUnit.Framework;
 using DataCurveSeer.Storage;
+using NSubstitute;
 using Should;
 
 namespace IntegrationTests
@@ -74,6 +76,40 @@ namespace IntegrationTests
 
 	    }
 
-	}
+        [Test]
+        public void Maintenance_ShouldDeleteSomething()
+        {
+
+            var deviceId = 530;
+            _iniSettings.DaysOfDataStorage.Returns(5);
+            var dbPath = CreateCopyOfDbAndReturnPath("DataCurveSeer_okt2019.db");
+
+            var storageHandler = new StorageHandler(_logging, _iniSettings, dbPath);
+            SystemDateTime.Now=()=>new DateTime(2019, 10, 16, 0, 0, 0);
+
+            storageHandler.AddDeviceValueToDatabase(99,SystemDateTime.Now(),deviceId);
+
+            storageHandler.AddDeviceValueToDatabase(99, SystemDateTime.Now(), deviceId);
+
+
+        }
+
+        private string CreateCopyOfDbAndReturnPath(string fileToFind)
+        {
+            var path = System.IO.Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+            if (path.StartsWith("file:\\"))
+            {
+                path = path.Substring(6);
+            }
+
+            if (string.IsNullOrEmpty(fileToFind))
+                fileToFind = "DataCurveSeer.db";
+            var existingDbPath = Path.Combine(path, fileToFind);
+            var newDbPath = Path.Combine(path, "DataCurveSeerEdit.db");
+            File.Copy(existingDbPath,newDbPath,overwrite:true);
+            return newDbPath;
+        }
+    }
 }
 

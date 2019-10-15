@@ -25,7 +25,7 @@ namespace DataCurveSeer.Storage
         private readonly string _pathToRepo;
         private IIniSettings _iniSettings;
 
-        public StorageHandler(ILogging logging,IIniSettings iniSettings, string dbPath = null)
+        public StorageHandler(ILogging logging, IIniSettings iniSettings, string dbPath = null)
         {
             _logging = logging;
             _iniSettings = iniSettings;
@@ -71,16 +71,16 @@ namespace DataCurveSeer.Storage
                         var lastMaintenanceDone =
                             storageMaintenanceValues.Exists(
                                 Query.EQ("DateTimeOfMaintenance", SystemDateTime.Now().Date));
-                        if (!lastMaintenanceDone )
+                        if (!lastMaintenanceDone)
                         {
                             DeleteAllValuesOlderThanSetNumberOfDays(db);
                             //Run maintenance
-                        }
-                        //Insert record for done maintenance
-                        storageMaintenanceValues.Insert(new StorageMaintenance()
-                            {DateTimeOfMaintenance = SystemDateTime.Now().Date});
-                        storageMaintenanceValues.EnsureIndex(x => x.DateTimeOfMaintenance);
 
+                            //Insert record for done maintenance
+                            storageMaintenanceValues.Insert(new StorageMaintenance()
+                            { DateTimeOfMaintenance = SystemDateTime.Now().Date });
+                            storageMaintenanceValues.EnsureIndex(x => x.DateTimeOfMaintenance);
+                        }
                     }
                 }
 
@@ -89,12 +89,17 @@ namespace DataCurveSeer.Storage
 
         private void DeleteAllValuesOlderThanSetNumberOfDays(LiteDatabase db)
         {
-            
-            var deviceValues = db.GetCollection<DeviceValue>();
+
+            var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
             //var deviceIds = deviceValues.FindAll().Select(x => x.DeviceId).Distinct();
-            var daysToGoBack=_iniSettings.DaysOfDataStorage;
-            var minimunDate = SystemDateTime.Now().Date.AddDays(daysToGoBack * -1);
-            deviceValues.Delete(Query.LT("DateTimeOfMeasurment", minimunDate));
+            var daysToGoBack = _iniSettings.DaysOfDataStorage;
+            if (daysToGoBack == 0) daysToGoBack = 10;
+
+            var minimumDate = SystemDateTime.Now().Date.AddDays(daysToGoBack * -1);
+            var docsRemoved=deviceValues.Delete(Query.LT("DateTimeOfMeasurment", minimumDate));
+            //remove log of done deletion
+            var storageMaintenanceValues = db.GetCollection<StorageMaintenance>(StorageMaintenanceTable);
+            var storageMaintenanceValuesRemoved = storageMaintenanceValues.Delete(Query.LT("DateTimeOfMaintenance", minimumDate));
             db.Shrink();
 
         }
@@ -145,7 +150,7 @@ namespace DataCurveSeer.Storage
                 endDateTime = toDateTime.Value;
             }
 
-        
+
             using (var db = new LiteRepository(_pathToRepo))
             {
                 _logging.LogDebug($"LiteDbRepo: selecting values for deviceId {deviceId} with starDateTime {startDateTime.ToString()} and endDateTime {endDateTime.ToString()}");
@@ -155,12 +160,12 @@ namespace DataCurveSeer.Storage
                             x.DateTimeOfMeasurment >= startDateTime &&
                             x.DateTimeOfMeasurment <= endDateTime)
                     .ToList()
-                    .OrderBy(x=>x.DateTimeOfMeasurment)
+                    .OrderBy(x => x.DateTimeOfMeasurment)
                     .ToList();
 
                 return foundValues;
             }
-            
+
         }
 
         public void Dispose()
