@@ -124,17 +124,13 @@ namespace DataCurveSeer.TriggerHandling.Triggers.DataCurveTriggerB
             if (_triggerSettings != null && _triggerSettings.GetTriggerConfigured())
             {
                 var thresholdValue = _triggerSettings.ThresholdValue;
-                var numberOfLastMeasurements = _triggerSettings.NumberOfLastMeasurements;
-                var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, SystemDateTime.Now().AddHours(-3),
-                    SystemDateTime.Now());
+                var numberOfLastMeasurements = _triggerSettings.NumberOfLastMeasurements??10;
+                var dataPoints = storageHandler.GetLastValuesForDevice(_triggerSettings.DeviceIdChosen.Value, numberOfLastMeasurements);
                 var lastValue = dataPoints.Last();
                 if (!ThresholdReached(lastValue.Value, thresholdValue, _triggerSettings.AscendingOrDescending))
                     return false;
 
-
-                _logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler == null}");
-
-                return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending, thresholdValue.Value, numberOfLastMeasurements.Value);
+                return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending, thresholdValue.Value, numberOfLastMeasurements);
             }
             return false;
         }

@@ -1,5 +1,7 @@
 CurveStat
 
+Kunne hente ut x siste verdier fra Repo. Idag henter siste 2 timer. Det kan være mer enn 2 timer mellom de 10 siste f.eks.
+
 Kunne vise feilmelding hvis man legger inn noe feil i trigger. 
 
 //Helt siste oppgave

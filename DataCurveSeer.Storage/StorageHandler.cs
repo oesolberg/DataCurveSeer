@@ -55,7 +55,7 @@ namespace DataCurveSeer.Storage
             using (var db = new LiteDatabase(_pathToRepo))
             {
                 var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
-                _logging.LogDebug("LitDbRepo: inserting value into liteDb");
+                _logging.LogDebug("LiteDbRepo: inserting value into liteDb");
                 deviceValues.Insert(new DeviceValue() { DeviceId = referenceId, Value = value, DateTimeOfMeasurment = dateTimeOfMeasurement });
                 deviceValues.EnsureIndex(x => x.DateTimeOfMeasurment);
                 deviceValues.EnsureIndex(x => x.DeviceId);
@@ -107,11 +107,30 @@ namespace DataCurveSeer.Storage
             using (var db = new LiteDatabase(_pathToRepo))
             {
                 var deviceValues = db.GetCollection<DeviceValue>(DeviceValuesTable);
-                _logging.LogDebug($"LitDbRepo: deleting values for deviceId {deviceId}");
+                _logging.LogDebug($"LiteDbRepo: deleting values for deviceId {deviceId}");
                 deviceValues.Delete(x => x.DeviceId == deviceId);
             }
             //}
         }
+
+        public List<DeviceValue> GetLastValuesForDevice(int deviceId, int maxNumberOfValues)
+        {
+            using (var db = new LiteRepository(_pathToRepo))
+            {
+                _logging.LogDebug($"LiteDbRepo: selecting the last {maxNumberOfValues} values for deviceId {deviceId}");
+
+                var foundValues = db.Query<DeviceValue>(DeviceValuesTable)
+                    .Where(x => x.DeviceId == deviceId)
+                    .ToList()
+                    .OrderBy(x => x.DateTimeOfMeasurment)
+                    .Take(maxNumberOfValues)
+                    .ToList();
+
+                return foundValues;
+            }
+        }
+
+
 
         public List<DeviceValue> GetValuesForDevice(int deviceId, DateTime? fromDateTime, DateTime? toDateTime)
         {
@@ -126,11 +145,10 @@ namespace DataCurveSeer.Storage
                 endDateTime = toDateTime.Value;
             }
 
-            //lock (_lockObject)
-            //{
+        
             using (var db = new LiteRepository(_pathToRepo))
             {
-                _logging.LogDebug($"LitDbRepo: selecting values for deviceId {deviceId} with starDateTime {startDateTime.ToString()} and endDateTime {endDateTime.ToString()}");
+                _logging.LogDebug($"LiteDbRepo: selecting values for deviceId {deviceId} with starDateTime {startDateTime.ToString()} and endDateTime {endDateTime.ToString()}");
 
                 var foundValues = db.Query<DeviceValue>(DeviceValuesTable)
                     .Where(x => x.DeviceId == deviceId &&
@@ -142,9 +160,7 @@ namespace DataCurveSeer.Storage
 
                 return foundValues;
             }
-            //}
-
-            //return new List<DeviceValue>();
+            
         }
 
         public void Dispose()

@@ -124,8 +124,10 @@ namespace DataCurveSeer.TriggerHandling.Triggers
 				var fromDate = SystemDateTime.Now().AddHours(_triggerSettings.TimeSpanChosen.Value.TotalHours * -1);
 				var dataPoints = storageHandler.GetValuesForDevice(_triggerSettings.DeviceIdChosen.Value, fromDate,
 					SystemDateTime.Now());
-				_logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler==null}");
-				if(_triggerSettings.UseFutureComputation && _triggerSettings.GetTriggerConfigured())
+				
+                //_logging.LogDebug($"calling trigger for computation _dataCurveComputationHandler==null={_dataCurveComputationHandler==null}");
+				
+                if(_triggerSettings.UseFutureComputation && _triggerSettings.GetTriggerConfigured())
 					return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending,_triggerSettings.FutureThresholdValue,_triggerSettings.FutureComputationTimeSpan);
 
 				return _dataCurveComputationHandler.TriggerTrue(dataPoints, _triggerSettings.AscendingOrDescending);
