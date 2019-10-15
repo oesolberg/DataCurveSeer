@@ -127,10 +127,17 @@ namespace DataCurveSeer.Storage
                 var foundValues = db.Query<DeviceValue>(DeviceValuesTable)
                     .Where(x => x.DeviceId == deviceId)
                     .ToList()
-                    .OrderBy(x => x.DateTimeOfMeasurment)
+                    .OrderByDescending(x => x.DateTimeOfMeasurment)
                     .Take(maxNumberOfValues)
+                    .OrderBy(x => x.DateTimeOfMeasurment)
                     .ToList();
-
+                if (foundValues.Any() && _logging.LogLevel == LogLevel.DebugToFile)
+                {
+                    foreach (var deviceValue in foundValues)
+                    {
+                        _logging.LogDebug($"{deviceValue.DateTimeOfMeasurment.ToString("yyyy-MM-dd HH:mm:ss")} {deviceValue.Value}");
+                    }
+                }
                 return foundValues;
             }
         }
