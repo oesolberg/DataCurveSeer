@@ -16,7 +16,7 @@ jobs:
     - name: Copy SharedAssembly
       run: |
           rm -rf hspluginversions
-          rm -rf AutomowerConnectSeer
+          rm -rf DataCurveSeer
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/oesolberg/hspluginversions.git 
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/oesolberg/DataCurveSeer.git 
           git config --global user.email "githubaction@github.com"
