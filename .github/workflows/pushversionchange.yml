@@ -1,0 +1,40 @@
+name: PushVersionChanges
+
+on: 
+  push:
+
+jobs:
+  pushversionchange:
+    runs-on: ubuntu-latest
+    steps:
+    #- uses: actions/first-interaction@v1
+    #  with:
+    #    repo-token: ${{ secrets.GITHUB_TOKEN }}
+    #    issue-message: 'Message that will be displayed on users'' first issue'
+    #    pr-message: 'Message that will be displayed on users'' first pr'
+    
+    - name: Copy SharedAssembly
+      run: |
+          rm -rf hspluginversions
+          rm -rf DataCurveSeer
+          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/oesolberg/hspluginversions.git 
+          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/oesolberg/DataCurveSeer.git 
+          git config --global user.email "githubaction@github.com"
+          git config --global user.name "Github Action"
+          cd hspluginversions
+          
+          echo 'removing origin'
+          git remote rm origin
+          echo 'adding origin'
+          git remote add origin https://oesolberg:${{secrets.version_access}}@github.com/oesolberg/hspluginversions.git 
+          git pull origin master --allow-unrelated-histories
+          mkdir -p DataCurveSeer
+          
+          cd DataCurveSeer
+          rm -f SharedAssemblyInfo.cs          
+          cp ../../DataCurveSeer/SharedAssemblyInfo.cs SharedAssemblyInfo.cs
+          git add .
+          echo 'Doing a commit'          
+          git commit -m "Automatic publish from DataCurveSeer"
+          echo 'Doing a push'
+          git push --set-upstream origin master
