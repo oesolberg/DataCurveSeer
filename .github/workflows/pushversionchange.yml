@@ -17,7 +17,7 @@ jobs:
       run: |
           rm -rf hspluginversions
           rm -rf DataCurveSeer
-          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/oesolberg/hspluginversions.git 
+          git clone https://.:${{ secrets.version_access }}@github.com/oesolberg/hspluginversions.git 
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/oesolberg/DataCurveSeer.git 
           git config --global user.email "githubaction@github.com"
           git config --global user.name "Github Action"
@@ -34,7 +34,17 @@ jobs:
           rm -f SharedAssemblyInfo.cs          
           cp ../../DataCurveSeer/SharedAssemblyInfo.cs SharedAssemblyInfo.cs
           git add .
-          echo 'Doing a commit'          
-          git commit -m "Automatic publish from DataCurveSeer"
-          echo 'Doing a push'
-          git push --set-upstream origin master
+          set +e  # Grep succeeds with nonzero exit codes to show results.          
+          git status | grep modified          
+          if [ $? -eq 0 ]                  
+          then
+            set -e
+            echo 'Doing a commit'
+            git commit -am "updated on - $(date) - DataCurveSeer"
+            echo 'Doing a push'
+            git push
+          else
+            echo 'No changes'
+            set -e
+            echo "No changes since last run"
+          fi
