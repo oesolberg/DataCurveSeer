@@ -42,7 +42,7 @@ jobs:
             echo 'Doing a commit'
             git commit -am "updated on - $(date) - DataCurveSeer"
             echo 'Doing a push'
-            git push
+            git push --set-upstream origin master
           else
             echo 'No changes'
             set -e
